@@ -1,0 +1,22 @@
+{
+  "Content-Length": "2",
+  "Content-Type": "application/json",
+  "Host": "127.0.0.1:8000",
+  "Connection": "keep-alive",
+  "Sec-Ch-Ua": "\"Chromium\";v=\"104\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"104\"",
+  "Sec-Ch-Ua-Mobile": "?0",
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+  "Accept": "text/html; q=1.0, */*",
+  "X-Requested-With": "XMLHttpRequest",
+  "X-Csrftoken": "WgUcNSffnedB4CjBOcbMjzos2YWv8qb7iht6iqFNgGpqgHDgR2e5oLJS2PJGQyT2",
+  "Sec-Ch-Ua-Platform": "\"Windows\"",
+  "Origin": "http://127.0.0.1:8000",
+  "Sec-Fetch-Site": "same-origin",
+  "Sec-Fetch-Mode": "cors",
+  "Sec-Fetch-Dest": "empty",
+  "Referer": "http://127.0.0.1:8000/api/vehicles/",
+  "Accept-Encoding": "gzip, deflate, br",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Cookie": "csrftoken=0KJSGqZQyKBhnwa1eespwOEbr0FbDAQnmLiMbYporcN6zBuGh4vIB0ZBrRsmlIyi; sessionid=xg3ycyyp9xrmqzp913lwyyfn582v2f71; tabstyle=html-tab",
+  "Authorization": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwMzk5OTE5LCJqdGkiOiIzZDZkZDdhYWY3M2Y0OTQ0YmQxZmNhNDkxM2Q0M2Y5NSIsInVzZXJfaWQiOjF9.3sLiervPv38YIbMJvogYX3YxEQ5d5M8jVuaJn5sLN7o"
+}
