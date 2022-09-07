@@ -41,7 +41,7 @@ class Log(models.Model):
     budget_type = models.CharField(max_length=1, choices=[('D', 'driver'), ('L', 'lane'), ('R', 'recovery')])
     autobooker = models.BooleanField(default=False)
     bol_number = models.CharField(max_length=15, blank=True)
-    pcs_number = models.CharField(max_length=15, unique=True)
+    pcs_number = models.CharField(max_length=15)
     date = models.DateTimeField(null=True)
     note = models.CharField(max_length=100, blank=True)
     is_edited = models.BooleanField(default=False)
