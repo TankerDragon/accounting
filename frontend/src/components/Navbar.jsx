@@ -69,7 +69,12 @@ function Navbar() {
           </Style.SLink>
         </li>
         <li>
-          <Style.SLink to={""}>
+          <Style.SLink
+            to={"/login"}
+            onClick={() => {
+              localStorage.setItem("authentication", JSON.stringify({}));
+            }}
+          >
             <FiLogOut />
             Log out
           </Style.SLink>

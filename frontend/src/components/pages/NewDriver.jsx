@@ -20,6 +20,9 @@ function NewDriver() {
     if (response.status === 401) {
       navigate("/login");
     }
+    if (response.status === 403) {
+      navigate("/budget");
+    }
     const data = await response.json();
     console.log(data);
     setDispatcherSelections(data);
@@ -29,7 +32,7 @@ function NewDriver() {
     first_name: "",
     last_name: "",
     driver_type: "R**",
-    dispatcher_id: null,
+    dispatcher: null,
     gross_target: "10000",
   });
 
@@ -98,11 +101,7 @@ function NewDriver() {
       <Style.Row>
         <Style.InputField>
           <label>Dispatcher</label>
-          <select
-            name="dispatchers"
-            id="dispatchers"
-            onChange={(e) => (e.target.value === "0" ? updateData("dispatcher_id", null, true) : updateData("dispatcher_id", parseInt(e.target.value), true))}
-          >
+          <select name="dispatchers" id="dispatchers" onChange={(e) => (e.target.value === "0" ? updateData("dispatcher", null, true) : updateData("dispatcher", parseInt(e.target.value), true))}>
             <option value="0">------</option>
             {dispatcherSelections.map((dispatcher) => {
               return (

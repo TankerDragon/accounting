@@ -1,6 +1,5 @@
 
 ###
-from asyncore import dispatcher
 from django.shortcuts import render, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -11,7 +10,7 @@ from django.db.models import Q
 from core.serializers import UserSerializer, UserCreateSerializer
 from .serializers import DriverSerializer, DispatcherSerializer, LogSerializer, CreateDriverSerializer, CreateDispatcherSerializer
 from core.models import User
-from .models import Driver, Log
+from .models import Driver, Log, LogEdit
 from decimal import Decimal
 import datetime
 
@@ -46,9 +45,7 @@ def test(request, id):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def main(request):
-    ###
-    request.user.is_superuser = True
-    ###
+    
 
     if request.method == "GET":
         if request.user.is_superuser:
@@ -80,18 +77,21 @@ def main(request):
             return Response(response_data, status=status.HTTP_200_OK)
         else:
             queryset = Driver.objects.filter(dispatcher=request.user).order_by('first_name')
-            driver_serializer = DriverSerializer(data=queryset, many=True)
+            driver_serializer = DriverSerializer(queryset, many=True)
             response_data = {
-                'divers': driver_serializer.data
+                'drivers': driver_serializer.data
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
             
     if request.method == "POST":
-        driverID = request.data["driver_id"]
+        data = request.data
+        
+
+        driverID = data["driver"]
         if not driverID:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        driver = Driver.objects.get(pk=request.data['driver_id'])
+        driver = Driver.objects.get(pk=data['driver'])
         # in_group = Group.objects.filter(staff = request.user)
         # drivers_list = list(map(lambda l: l.driver_id, in_group))
         # print(drivers_list)
@@ -108,7 +108,6 @@ def main(request):
         # }
 
         if request.user.is_superuser or driver.dispatcher == request.user:
-            data = request.data
             # adding changed amount to the data
             try:
                 change = Decimal(request.data['original_rate']) - Decimal(request.data['current_rate'])
@@ -117,15 +116,15 @@ def main(request):
             data['change'] = change
 
             b_type = request.data['budget_type']
-            data['user_id'] = request.user.id
-            
-            print('request.user.id', request.user.id)
+            data['user'] = request.user.id
 
-            log = LogSerializer(data=data)
-            if log.is_valid():
-                saved_log = log.save()
-                saved_log.date = datetime.datetime.now()
-                saved_log.save()
+            data['date'] = datetime.datetime.now()
+            
+
+
+            log_serializer = LogSerializer(data=data)
+            if log_serializer.is_valid():
+                log_serializer.save()
                 #
                 if b_type == 'D':
                     driver.d_budget += change
@@ -137,15 +136,13 @@ def main(request):
                     driver.s_budget += change
                 driver.save()
                 return Response(status=status.HTTP_200_OK)
-            return Response(log.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def new_driver(request):
-    ###
-    request.user.is_superuser = True
-    ###
+    
     if request.user.is_superuser:
         if request.method == 'GET':
             dispatchers = User.objects.filter(is_superuser = False).values('id', 'username')
@@ -154,6 +151,7 @@ def new_driver(request):
             return Response(dispatchers_list, status=status.HTTP_200_OK)
 
         if request.method == 'POST':
+            print(request.data)
             driver_serializer = CreateDriverSerializer(data=request.data)
             if driver_serializer.is_valid():
                 driver_serializer.save()
@@ -167,9 +165,7 @@ def new_driver(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getDispatchers(request):
-    ###
-    request.user.is_superuser = True
-    ###
+    
     if request.user.is_superuser:
         if request.method == 'GET':
             dispatchers = User.objects.filter(is_superuser = False)
@@ -183,9 +179,7 @@ def getDispatchers(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def new_dispatcher(request):
-    ###
-    request.user.is_superuser = True
-    ###
+    
     if request.user.is_superuser:
         if request.method == 'POST':
             driver_serializer = CreateDispatcherSerializer(data=request.data)
@@ -196,6 +190,159 @@ def new_dispatcher(request):
         
     else:
         return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def archive(request):
+    if request.method == 'GET':
+        log_edits = LogEdit.objects.all().values('edited_log')
+        logEdits_list = list(map(lambda l: l['edited_log'], log_edits))
+        if request.user.is_superuser:
+            queryset = Log.objects.filter(is_edited = False).order_by('-date')
+        else:
+            queryset = Log.objects.filter(user = request.user, is_edited = False).order_by('-date') #, user=request.user
+        
+        #preparing driver names
+        driver_ids = list(map(lambda q: q.driver_id, queryset))
+        driver_names = Driver.objects.filter(pk__in = driver_ids).values('id', 'first_name', 'last_name')
+
+        log_serializer = LogSerializer(queryset, many=True)
+
+        for query in log_serializer.data:
+            # driver = drivers.get(id = query.driver_id)
+            query["name"] = get_name(query.driver_id, driver_names)
+            query["edited_link"] = False
+            if query["id"] in logEdits_list:
+                query["edited_link"] = True
+
+        return Response(log_serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def driver_archive(request, id):
+    log_edits = LogEdit.objects.all().values('edited_log')
+    logEdits_list = list(map(lambda l: l['edited_log'], log_edits))
+    #
+    # driver = Driver.objects.get(pk = id)
+
+    if request.user.is_superuser:
+        queryset = Log.objects.all().filter(driver_id = id, is_edited = False).order_by('-date')
+    else:
+        # in_group = Group.objects.filter(staff = request.user)
+        # drivers_list = list(map(lambda l: l.driver_id, in_group))
+        queryset = Log.objects.filter(driver_id = id, is_edited = False).order_by('-date') #, user=request.user
+
+    log_serializer = LogSerializer(queryset, many=True)
+
+    for query in log_serializer.data:
+        query["edited_link"] = False
+        if query["id"] in logEdits_list:
+            query["edited_link"] = True
+
+    return Response(log_serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def edit_log(request, id):
+    log = Log.objects.get(pk=id)
+    if request.method == 'GET':
+        log_serializer = LogSerializer(log)
+        return Response(log_serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PATCH':
+        data = request.data
+
+
+        #check if user selected its own driver
+        check_driver = Driver.objects.get(pk = data['driver'])
+        if request.user.is_superuser or check_driver.dispatcher == request.user:
+            driver = Driver.objects.get(id = log.driver_id)
+
+            #updating log
+
+            try:
+                change = Decimal(data['original_rate']) - Decimal(data['current_rate'])
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+            change = round(change * Decimal(100)) / Decimal(100)
+            data['change'] = change
+
+            b_type = request.data['budget_type']
+            data['user'] = request.user.id
+            # data
+            
+            log_serializer = LogSerializer(data=data)
+            if log_serializer.is_valid():
+                new_log = log_serializer.save()
+                #
+                if b_type == 'D':
+                    driver.d_budget += change
+                elif b_type == 'L':
+                    driver.l_budget += change
+                elif b_type == 'R':
+                    driver.r_budget += change
+                elif b_type == 'S':
+                    driver.s_budget += change
+                driver.save()
+
+                print(new_log.id)
+
+                log.is_edited = True
+                log.save()
+                # fixing time
+                saved_log = Log.objects.get(pk=new_log.id)
+                saved_log.date = log.date
+                saved_log.save()
+                
+                #getting back changed budget from driver
+                if log.budget_type == 'D':
+                    driver.d_budget -= log.change
+                elif log.budget_type == 'L':
+                    driver.l_budget -= log.change
+                elif log.budget_type == 'R':
+                    driver.r_budget -= log.change
+                elif log.budget_type == 'S':
+                    driver.s_budget -= log.change
+                driver.save()
+
+                 #saving log edition
+                log_edit = LogEdit.objects.create(original_log = log, edited_log = new_log)
+                log_edit.save()
+                return Response(log_serializer.data, status=status.HTTP_200_OK)
+            # print(log_serializer.errors)
+            return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def archive_edits(request, id):
+    #selecting logs only related to given ID
+    editGroup = LogEdit.objects.all().order_by('-date') #values('original_log', 'edited_log')
+    nextPickID = id
+    pickedLogs = []
+    pickedLogs.append(id)
+    for g in editGroup:
+        if g.edited_log_id == nextPickID:
+            nextPickID = g.original_log_id
+            pickedLogs.append(nextPickID)
+
+    editedLogs = Log.objects.filter(pk__in = pickedLogs)
+
+    log_serializer = LogSerializer(editedLogs, many=True)
+    # reverding data
+    data = log_serializer.data[::-1]
+    return Response(data, status=status.HTTP_200_OK)
+    # #adding drivers name
+    # driver_ids = list(map(lambda q: q.driver_id, editedLogs))
+    # driver_names = Driver.objects.filter(pk__in = driver_ids).values('id', 'first_name', 'last_name')
+    # for e_query in editedLogs:
+    #     e_query.name = get_name(e_query.driver_id, driver_names)
+
 
 
 

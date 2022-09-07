@@ -1,14 +1,14 @@
 import "./App.css";
-import { BrowserRouter, Link } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
 import Pages from "./components/pages/Pages";
 // import styles
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <HashRouter>
         <Pages />
-      </BrowserRouter>
+      </HashRouter>
     </div>
   );
 }

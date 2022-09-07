@@ -24,6 +24,9 @@ function Dispatchers() {
     if (response.status === 401) {
       navigate("/login");
     }
+    if (response.status === 403) {
+      navigate("/budget");
+    }
     const data = await response.json();
     console.log(data);
     setDispatchers(data);

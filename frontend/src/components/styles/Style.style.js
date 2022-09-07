@@ -80,6 +80,7 @@ export const Style = {
       display: block;
       font-size: 0.9rem;
       margin-bottom: 5px;
+      white-space: nowrap;
     }
     input,
     select {
@@ -92,6 +93,15 @@ export const Style = {
     }
     select {
       width: 100%;
+    }
+    input[type="checkbox"] {
+      /* Double-sized Checkboxes */
+      -ms-transform: scale(1.5); /* IE */
+      -moz-transform: scale(1.5); /* FF */
+      -webkit-transform: scale(1.5); /* Safari and Chrome */
+      -o-transform: scale(1.5); /* Opera */
+      transform: scale(1.5);
+      padding: 10px;
     }
   `,
 
@@ -227,6 +237,9 @@ export const Style = {
         background-color: gray;
       }
 
+      .edit {
+        color: rgb(247, 177, 64);
+      }
       .dollar {
         color: rgb(240, 212, 0);
       }
@@ -239,6 +252,12 @@ export const Style = {
       .cross {
         color: rgb(255, 91, 91);
         font-size: 1rem !important;
+      }
+
+      .msg a {
+        color: green;
+        font-style: italic;
+        font-weight: bold;
       }
     }
     tbody tr:hover .actions {

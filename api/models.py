@@ -33,14 +33,15 @@ class Driver(models.Model):
 
 class Log(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     original_rate = models.DecimalField(max_digits=9,decimal_places=2)
     current_rate = models.DecimalField(max_digits=9,decimal_places=2)
     change = models.DecimalField(max_digits=9,decimal_places=2)
     total_miles = models.IntegerField()
-    budget_type = models.CharField(max_length=1, choices=[('D', 'driver'), ('L', 'lane'), ('R', 'recovery'), ('S', 'dirilis')])
+    budget_type = models.CharField(max_length=1, choices=[('D', 'driver'), ('L', 'lane'), ('R', 'recovery')])
+    autobooker = models.BooleanField(default=False)
     bol_number = models.CharField(max_length=15, blank=True)
-    pcs_number = models.CharField(max_length=15, blank=True)
-    user = models.CharField(max_length=20)
+    pcs_number = models.CharField(max_length=15, unique=True)
     date = models.DateTimeField(null=True)
     note = models.CharField(max_length=100, blank=True)
     is_edited = models.BooleanField(default=False)

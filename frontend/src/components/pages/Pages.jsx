@@ -8,6 +8,9 @@ import Dispatchers from "./Dispatchers";
 import NewDriver from "./NewDriver";
 import NewDispatcher from "./NewDispatcher";
 import Login from "./Login";
+import DriverArchive from "./DriverArchive";
+import EditLog from "./EditLog";
+import EditArchive from "./EditArchive";
 
 function Pages() {
   return (
@@ -19,6 +22,9 @@ function Pages() {
         <Route path="/dispatchers" element={<Dispatchers />} />
         <Route path="/new-driver" element={<NewDriver />} />
         <Route path="/new-dispatcher" element={<NewDispatcher />} />
+        <Route path="/archive/:id" element={<DriverArchive />} />
+        <Route path="/edit-log/:id" element={<EditLog />} />
+        <Route path="/edit-archive/:id" element={<EditArchive />} />
       </Routes>
     </Container>
   );

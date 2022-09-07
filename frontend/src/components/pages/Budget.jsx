@@ -32,10 +32,11 @@ function Budget() {
   };
 
   const [log, setLog] = useState({
-    driver_id: null,
+    driver: null,
     original_rate: null,
     current_rate: null,
     budget_type: "D",
+    autobooker: false,
     total_miles: null,
     bol_number: "",
     pcs_number: "",
@@ -44,7 +45,7 @@ function Budget() {
 
   const cancelForm = () => {
     setLog({
-      driver_id: null,
+      driver: null,
       original_rate: null,
       current_rate: null,
       budget_type: "D",
@@ -71,13 +72,16 @@ function Budget() {
       },
       body: JSON.stringify(log),
     });
-    const data = await response.json();
-    console.log("data*", data);
+    // const data = await response.json();
+    // console.log("data*", data);
 
     if (response.status === 400) {
       window.alert(response.statusText);
     } else if (response.status === 401) {
       navigate("/login");
+    } else if (response.status === 200) {
+      getDrivers();
+      cancelForm();
     }
 
     // setDrivers(data);
@@ -167,12 +171,17 @@ function Budget() {
                       className="icon-holder"
                       onClick={() => {
                         setFormOpen(true);
-                        updateData("driver_id", driver.id);
+                        updateData("driver", driver.id);
                       }}
                     >
                       <FaDollarSign className="icon dollar" />
                     </div>
-                    <div className="icon-holder">
+                    <div
+                      className="icon-holder"
+                      onClick={() => {
+                        navigate("/archive/" + driver.id);
+                      }}
+                    >
                       <FiClock className="icon clock" />
                     </div>
                     <div className="icon-holder">
@@ -217,8 +226,15 @@ function Budget() {
                     <option value="D">Driver's budget</option>
                     <option value="L">Lane budget</option>
                     <option value="R">Recovery budget</option>
-                    <option value="S">Dirilis budget</option>
                   </select>
+                </Style.InputField>
+              </Style.Row>
+              <Style.Row>
+                <Style.InputField>
+                  <Style.Row>
+                    <label>Booked by Autobooker</label>
+                    <input onChange={(e) => updateData("autobooker", e.target.checked)} type="checkbox" checked={log.autobooker} />
+                  </Style.Row>
                 </Style.InputField>
               </Style.Row>
               <Style.Row>
@@ -227,7 +243,7 @@ function Budget() {
                   <input onChange={(e) => updateData("bol_number", e.target.value)} type="text" value={log.bol_number} />
                 </Style.InputField>
                 <Style.InputField>
-                  <label>PCS number</label>
+                  <label>PCS number*</label>
                   <input onChange={(e) => updateData("pcs_number", e.target.value)} type="text" value={log.pcs_number} />
                 </Style.InputField>
               </Style.Row>
