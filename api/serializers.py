@@ -1,7 +1,13 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from core.models import User
 from .models import Driver, Log
+
+
+class LogDecimalFielsSerializer(Serializer):
+    current_rate = serializers.DecimalField(max_digits=9, decimal_places=2)
+    original_rate = serializers.DecimalField(max_digits=9, decimal_places=2)
 
 
 class UserSerializer(ModelSerializer):
@@ -19,7 +25,7 @@ class DriverSerializer(ModelSerializer):
 class DispatcherSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'last_login', 'date_joined']
+        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined']
 
 class LogSerializer (ModelSerializer):
     class Meta:
@@ -45,6 +51,12 @@ class CreateDispatcherSerializer(ModelSerializer):
     def validate_password(self, value: str) -> str:
         """    Hash value passed by user.    :param value: password of a user    :return: a hashed version of the password    """    
         return make_password(value)
+
+class UpdateDispatcherSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name']
+
 # class VehicleSerializer(ModelSerializer):
 #     driver_id = serializers.IntegerField(required=False)
 #     class Meta:
@@ -60,3 +72,4 @@ class CreateDispatcherSerializer(ModelSerializer):
 #     class Meta:
 #         model = Log
 #         fields = ['id', 'driver', 'status', 'date', 'time', 'location', 'lat', 'lng', 'vehicle', 'odometer', 'eng_hours', 'notes', 'document', 'trailer']
+

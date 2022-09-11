@@ -9,6 +9,12 @@ import { BsPencil } from "react-icons/bs";
 import { Style } from "../styles/Style.style";
 
 function DriverArchive() {
+  const fixTime = (dateTime) => {
+    const time = new Date(dateTime);
+    console.log(typeof time.getTime);
+    return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
+  };
+
   let params = useParams();
   const navigate = useNavigate();
 
@@ -65,7 +71,7 @@ function DriverArchive() {
                 <td>{log.total_miles}</td>
                 <td>{log.budget_type === "D" ? "Driver's" : log.budget_type === "L" ? "Lane" : log.budget_type === "R" ? "Recovery" : log.budget_type === "S" ? "Dirilis" : "***error"}</td>
                 <td>{log.autobooker ? "yes" : ""}</td>
-                <td>{log.date}</td>
+                <td>{fixTime(log.date)}</td>
                 <td>{log.user}</td>
                 <td>{log.bol_number}</td>
                 <td>{log.pcs_number}</td>

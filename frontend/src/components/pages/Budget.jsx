@@ -17,6 +17,9 @@ function Budget() {
   }, []);
 
   const getDrivers = async () => {
+    if (!localStorage.getItem("authentication")) {
+      navigate("/login");
+    }
     console.log("*/*/*/*/*/", JSON.parse(localStorage.getItem("authentication")).access);
     const response = await fetch(`/api/budget/`, {
       headers: {
@@ -28,7 +31,7 @@ function Budget() {
     }
     const data = await response.json();
     console.log(data);
-    setDrivers(data.drivers);
+    setDrivers(data);
   };
 
   const [log, setLog] = useState({
@@ -44,6 +47,7 @@ function Budget() {
   });
 
   const cancelForm = () => {
+    setFormOpen(false);
     setLog({
       driver: null,
       original_rate: null,
@@ -54,7 +58,6 @@ function Budget() {
       pcs_number: "",
       note: "",
     });
-    setFormOpen(false);
   };
 
   const updateData = (obj, value) => {
@@ -72,16 +75,19 @@ function Budget() {
       },
       body: JSON.stringify(log),
     });
-    // const data = await response.json();
-    // console.log("data*", data);
-
-    if (response.status === 400) {
-      window.alert(response.statusText);
-    } else if (response.status === 401) {
-      navigate("/login");
-    } else if (response.status === 200) {
-      getDrivers();
+    if (response.status === 200) {
       cancelForm();
+      getDrivers();
+    } else {
+      const data = await response.json();
+      console.log("data*", data);
+      if (response.status === 400) {
+        window.alert(response.statusText);
+      } else if (response.status === 401) {
+        navigate("/login");
+      } else {
+        window.alert(response.statusText);
+      }
     }
 
     // setDrivers(data);
@@ -184,7 +190,12 @@ function Budget() {
                     >
                       <FiClock className="icon clock" />
                     </div>
-                    <div className="icon-holder">
+                    <div
+                      className="icon-holder"
+                      onClick={() => {
+                        navigate("/edit-driver/" + driver.id);
+                      }}
+                    >
                       <FiUser className="icon profile" />
                     </div>
                     <div className="icon-holder">

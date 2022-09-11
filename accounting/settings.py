@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'djoser',
+    'rest_framework_simplejwt',
+    # 'djoser',
     # 'corsheaders',
     'debug_toolbar',
     'api',
@@ -174,6 +175,7 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'core.User'
 
 # https://djoser.readthedocs.io/
+# https://django-rest-framework-simplejwt.readthedocs.io/
 
 DJOSER = {
     'SERIALIZERS': {

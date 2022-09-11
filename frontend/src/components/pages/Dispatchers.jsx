@@ -10,6 +10,12 @@ import { Style } from "../styles/Style.style";
 function Dispatchers() {
   const navigate = useNavigate();
 
+  const fixTime = (dateTime) => {
+    const time = new Date(dateTime);
+    console.log(typeof time.getTime);
+    return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
+  };
+
   const [dispatchers, setDispatchers] = useState([]);
   useEffect(() => {
     getDispatchers();
@@ -45,7 +51,6 @@ function Dispatchers() {
             <th>First name</th>
             <th>Last name</th>
             <th>Username</th>
-            <th>Last login</th>
             <th>Date joined</th>
             <th>Actions</th>
           </tr>
@@ -58,11 +63,15 @@ function Dispatchers() {
                 <td>{dispatcher.first_name}</td>
                 <td>{dispatcher.last_name}</td>
                 <td>{dispatcher.username}</td>
-                <td>{dispatcher.last_login}</td>
-                <td>{dispatcher.date_joined}</td>
+                <td>{fixTime(dispatcher.date_joined)}</td>
                 <td>
                   <div className="actions" style={{ width: 80 }}>
-                    <div className="icon-holder">
+                    <div
+                      className="icon-holder"
+                      onClick={() => {
+                        navigate("/edit-dispatcher/" + dispatcher.id);
+                      }}
+                    >
                       <FiUser className="icon profile" />
                     </div>
                     <div className="icon-holder">

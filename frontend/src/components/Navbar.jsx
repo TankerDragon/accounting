@@ -1,9 +1,8 @@
 import React from "react";
 import logo from "../images/logo.png";
 // importing icons
-import { FiUserPlus, FiLogOut } from "react-icons/fi";
-import { RiExchangeDollarLine, RiLineChartLine } from "react-icons/ri";
-import { GrUserManager } from "react-icons/gr";
+import { FiUserPlus, FiLogOut, FiUsers } from "react-icons/fi";
+import { RiExchangeDollarLine, RiLineChartLine, RiAdminLine } from "react-icons/ri";
 import { HiOutlineKey } from "react-icons/hi";
 import { BsArchive } from "react-icons/bs";
 // importing styles
@@ -37,7 +36,7 @@ function Navbar() {
         </li>
         <li>
           <Style.SLink to={"/dispatchers"}>
-            <GrUserManager />
+            <FiUsers />
             All Dispatchers
           </Style.SLink>
         </li>
@@ -58,6 +57,12 @@ function Navbar() {
             <BsArchive />
             Archive
           </Style.SLink>
+        </li>
+        <li>
+          <Style.SAncer href={"/admin"}>
+            <RiAdminLine />
+            Admin panel
+          </Style.SAncer>
         </li>
       </ul>
       <h3>Actions</h3>

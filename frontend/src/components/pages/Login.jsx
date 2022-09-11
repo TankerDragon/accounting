@@ -14,7 +14,7 @@ function Login() {
   };
 
   const postLogin = async () => {
-    const response = await fetch(`/auth/jwt/create`, {
+    const response = await fetch(`/api/token/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

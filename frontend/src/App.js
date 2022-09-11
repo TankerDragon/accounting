@@ -1,11 +1,11 @@
 import "./App.css";
-import { BrowserRouter, HashRouter } from "react-router-dom";
-import Pages from "./components/pages/Pages";
+import { HashRouter } from "react-router-dom";
+import Pages from "./components/Pages";
 // import styles
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" id="App">
       <HashRouter>
         <Pages />
       </HashRouter>

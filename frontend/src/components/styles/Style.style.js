@@ -3,14 +3,15 @@ import { Link, NavLink } from "react-router-dom";
 
 export const Style = {
   Nav: styled.div`
-    background: #fff;
+    background: var(--color-container);
     position: fixed;
     left: 0;
     width: 220px;
     height: 100vh;
-    color: #1d1d1d;
+    /* color: #1d1d1d; */
+    color: var(--color-text);
     z-index: 2;
-    box-shadow: 0px 0px 7px 0px #b3b3b3;
+    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
 
     .logo-container {
       display: flex;
@@ -27,16 +28,16 @@ export const Style = {
   `,
 
   Container: styled.div`
-    background: #fff;
+    background: var(--color-container);
     width: calc(100% - 40px);
     margin: auto;
-    margin-top: 50px;
+    margin-top: 30px;
     margin-bottom: 30px;
     min-height: 80vh;
     border-radius: 20px;
     padding: 20px;
     z-index: 2;
-    box-shadow: 0px 0px 7px 0px #b3b3b3;
+    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
   `,
 
   Row: styled.div`
@@ -46,7 +47,7 @@ export const Style = {
 
     h1 {
       font-size: 1.5rem;
-      color: #1d1d1d;
+      color: var(--color-text);
     }
   `,
 
@@ -76,7 +77,7 @@ export const Style = {
     width: 300px;
 
     label {
-      color: #4b4b4b;
+      color: var(--color-label);
       display: block;
       font-size: 0.9rem;
       margin-bottom: 5px;
@@ -111,7 +112,7 @@ export const Style = {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: #1d1d1d;
+    color: var(--color-text);
     transition: 0.5s ease;
 
     svg {
@@ -131,10 +132,31 @@ export const Style = {
     }
   `,
 
+  SAncer: styled.a`
+    padding: 10px 15px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: 0.5s ease;
+
+    svg {
+      font-size: 1.2rem;
+      margin-right: 10px;
+    }
+    :hover {
+      cursor: pointer;
+      background: #fc6c19;
+      color: white;
+      border-left: 5px solid black;
+    }
+  `,
+
   SButton: styled(Link)`
     padding: 12px 18px;
     background: #fc6c19;
-    box-shadow: 0px 0px 7px 0px #b3b3b3;
+    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
     border-radius: 20px;
     text-decoration: none;
     font-size: 0.9rem;
@@ -193,7 +215,7 @@ export const Style = {
       text-align: left;
     }
     th {
-      border-bottom: 2px solid black;
+      border-bottom: 2px solid var(--color-text);
     }
     tbody tr {
       transition: 0.4s ease;
@@ -202,7 +224,7 @@ export const Style = {
       white-space: nowrap;
     }
     tbody tr:hover {
-      background: #e3e3e3;
+      background: var(--color-tr-hover);
     }
     a {
       width: 100%;
@@ -291,17 +313,18 @@ export const Style = {
 
     .form {
       position: absolute;
-      background: #fff;
+      background: var(--color-container);
       width: 700px;
       border-radius: 20px;
       padding: 30px;
-      box-shadow: 0px 0px 7px 0px #b3b3b3;
+      box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
     }
   `,
   LoginContainer: styled.div`
     position: fixed;
     left: 0;
-    background: #fff;
+    top: 0;
+    background: var(--color-background);
     width: 100%;
     height: 100vh;
     display: flex;
@@ -309,10 +332,37 @@ export const Style = {
     justify-content: center;
     z-index: 2;
     .container {
-      box-shadow: 0px 0px 7px 0px #b3b3b3;
+      background: var(--color-container);
+      box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
       border-radius: 15px;
       padding: 30px;
       padding-bottom: 50px;
+    }
+  `,
+  ControlBar: styled.div`
+    background: var(--color-container);
+    width: calc(100% - 40px);
+    margin: auto;
+    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    padding: 15px;
+  `,
+  ModeChanger: styled.div`
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--color-mode-changer-background);
+    color: var(--color-mode-changer-color);
+    &:hover {
+      cursor: pointer;
+    }
+    svg {
+      font-size: 1.5rem;
     }
   `,
 };

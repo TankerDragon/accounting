@@ -54,18 +54,19 @@ function EditLog() {
       },
       body: JSON.stringify(log),
     });
-    const data = await response.json();
-    console.log("data*", data);
-
     if (response.status === 200) {
       navigate("/archive/" + log.driver);
-    } else if (response.status === 401) {
-      navigate("/login");
     } else {
-      window.alert(response.statusText);
+      const data = await response.json();
+      console.log("data*", data);
+      if (response.status === 400) {
+        window.alert(response.statusText);
+      } else if (response.status === 401) {
+        navigate("/login");
+      } else {
+        window.alert(response.statusText);
+      }
     }
-
-    // setDrivers(data);
   };
 
   const handleSubmit = () => {
