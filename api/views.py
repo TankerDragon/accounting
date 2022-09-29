@@ -1,5 +1,6 @@
 
 ###
+from lib2to3.pgen2 import driver
 from django.shortcuts import render, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -8,11 +9,13 @@ from rest_framework import status
 from django.conf import settings
 from django.db.models import Q
 from core.serializers import UserSerializer, UserCreateSerializer
-from .serializers import DriverSerializer, DispatcherSerializer, LogSerializer, CreateDriverSerializer, CreateDispatcherSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer
+from .serializers import DriverSerializer, DispatcherSerializer, LogSerializer, CreateDriverSerializer, CreateDispatcherSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
 from core.models import User
 from .models import Driver, Log, LogEdit
 from decimal import Decimal
+from .tasks import notify_customers
 import datetime
+
 
 # constants
 
@@ -23,7 +26,7 @@ WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 
  
 def get_week_start():
     now = datetime.datetime.now()
-    now = now.replace(hour=0, minute=0, second=1)
+    now = now.replace(hour=0, minute=0, second=0)
     days = WEEKDAYS.index(now.strftime("%A")) + 1  # starting date from Saturday
     week_start = now - datetime.timedelta(days=days)
     return week_start
@@ -36,8 +39,10 @@ def get_name(id, arr):
 
 # Create your views here.
 @api_view(['GET', 'PATCH'])
-def test(request, id):
-    pass
+@permission_classes([AllowAny])
+def test(request):
+    notify_customers.delay('hello')
+    return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -58,13 +63,14 @@ def main(request):
             # adding data
             data['change'] = check_decimal_places.validated_data['original_rate'] - check_decimal_places.validated_data['current_rate']
             data['user'] = request.user.id
-            data['date'] = datetime.datetime.now()
+            data['date'] = datetime.date.today()
+            data['time'] = datetime.datetime.now().strftime("%H:%M:%S")
+            
             # check if data is valid
             log_serializer = LogSerializer(data=data)
             if log_serializer.is_valid():
                 # check if pcs_number is not used before
                 numOfPCSNumbers = Log.objects.filter(pcs_number=data['pcs_number'], is_edited=False).count()
-                print(numOfPCSNumbers)
                 if numOfPCSNumbers == 0:
                     driver = Driver.objects.get(pk=data['driver'])
                     # check if user is superuser or user is driver's dispatcher
@@ -180,14 +186,13 @@ def edit_dispatcher(request, id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def archive(request):
+def archive(request, date):
     if request.method == 'GET':
+        # queryset = Log.objects.filter(date = date, is_edited = False).order_by('-date')
+
         log_edits = LogEdit.objects.all().values('edited_log')
         logEdits_list = list(map(lambda l: l['edited_log'], log_edits))
-        if request.user.is_superuser:
-            queryset = Log.objects.filter(is_edited = False).order_by('-date')
-        else:
-            queryset = Log.objects.filter(user = request.user, is_edited = False).order_by('-date') #, user=request.user
+        queryset = Log.objects.filter(date = date, is_edited = False).order_by('-date')
         
         #preparing driver names
         driver_ids = list(map(lambda q: q.driver_id, queryset))
@@ -197,7 +202,7 @@ def archive(request):
 
         for query in log_serializer.data:
             # driver = drivers.get(id = query.driver_id)
-            query["name"] = get_name(query.driver_id, driver_names)
+            query["name"] = get_name(query["driver"], driver_names)
             query["edited_link"] = False
             if query["id"] in logEdits_list:
                 query["edited_link"] = True
@@ -312,6 +317,70 @@ def archive_edits(request, id):
     # driver_names = Driver.objects.filter(pk__in = driver_ids).values('id', 'first_name', 'last_name')
     # for e_query in editedLogs:
     #     e_query.name = get_name(e_query.driver_id, driver_names)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def drivers_board(request, week_before):
+    request.user.is_superuser = True
+    # calculating requested week start and week end
+    week_start = get_week_start() - datetime.timedelta(days=(7 * week_before))
+    week_end = week_start + datetime.timedelta(days=7)
+    # till_today = datetime.datetime.now() + datetime.timedelta(days=1)
+
+    dispatchers = User.objects.filter(is_superuser=False).values("username")
+    dispatchers_list = [dispatcher["username"] for dispatcher in dispatchers]
+    logs = Log.objects.filter(date__gte = week_start, date__lte = week_end, is_edited=False)
+
+    if request.user.is_superuser:
+        drivers = Driver.objects.all().values("id", "first_name", "last_name", "dispatcher", "gross_target")
+    else:
+        drivers = Driver.objects.filter(dispatcher=request.user).values("id", "first_name", "last_name", "dispatcher", "gross_target")
+
+    drivers = list(drivers)
+    # drivers_serializer = DriversBoardSerializer(drivers, many=True)
+    for d in drivers:
+        print(d.id)
+
+
+    # for driver in drivers:
+    #     driver.disp =''
+    #     for d in dispatchers_list:
+    #         if driver.dispatcher_id == d[0]:
+    #             driver.disp = d[1]
+
+    #     driver_logs = list(filter(lambda l: l.driver_id == driver.id, logs))
+    #     total_miles = 0
+    #     actual_gross = 0
+    #     for l in driver_logs:
+    #         total_miles += l.total_miles
+    #         actual_gross += l.current_rate
+
+    #     driver.loads = len(driver_logs)
+    #     driver.total_miles = total_miles
+    #     driver.actual_gross = actual_gross
+    #     if total_miles == 0:
+    #         driver.rate = 0
+    #     else:    
+    #         driver.rate = round((actual_gross / total_miles)*100) / 100
+
+    #     if driver.gross_target == 0:
+    #         driver.percentage = 0
+    #     else:    
+    #         driver.percentage = round((actual_gross / driver.gross_target) * 10000) / 100
+
+    # drivers = sorted(drivers, key=lambda d: d.percentage, reverse=True)
+
+    # context = {
+    #     'drivers': drivers, 
+    #     'is_superuser': request.user.is_superuser, 
+    #     'user': request.user,
+    #     'category' : 'drivers-gross',
+    #     "week_start": week_start.date,
+    #     "week_end": week_end.date
+    #     }
+    # return render(request, "drivers-board.html", context)
+    return Response(drivers, status=status.HTTP_200_OK)
 
 
 

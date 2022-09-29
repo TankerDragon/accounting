@@ -22,6 +22,12 @@ class DriverSerializer(ModelSerializer):
         model = Driver
         fields = ['id', 'dispatcher', 'd_budget', 'l_budget', 'r_budget', 's_budget', 'first_name', 'last_name', 'driver_type', 'gross_target', 'is_active']
 
+class DriversBoardSerializer(ModelSerializer):
+    class Meta:
+        model = Driver
+        fields = ['id', 'dispatcher', 'first_name', 'last_name', 'gross_target']
+    
+
 class DispatcherSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -30,7 +36,29 @@ class DispatcherSerializer(ModelSerializer):
 class LogSerializer (ModelSerializer):
     class Meta:
         model = Log
-        fields = ['id', 'driver', 'user', 'budget_type', 'autobooker', 'current_rate', 'original_rate', 'change', 'total_miles', 'date', 'pcs_number', 'bol_number', 'note']
+        fields = [
+            'id', 
+            'driver', 
+            'user', 
+            'budget_type', 
+            'autobooker', 
+            'current_rate', 
+            'original_rate',
+            'change', 
+            'total_miles', 
+            'date',
+            'time',
+            'pcs_number', 
+            'bol_number',
+            'trailer',
+            'truck',
+            'status', 
+            'origin',
+            'origin_state',
+            'destination',
+            'destination_state',
+            'note',
+            ]
 
 
 # class EditLogSerializer (ModelSerializer):

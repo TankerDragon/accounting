@@ -3,7 +3,8 @@ import { Route, Routes } from "react-router-dom";
 //
 import Navbar from "./Navbar";
 import ControlBar from "./ControlBar";
-import Budget from "./pages/Budget";
+import GrossBoard from "./pages/grossBoard/GrossBoard";
+import Drivers from "./pages/Drivers";
 import Dispatchers from "./pages/Dispatchers";
 import NewDriver from "./pages/NewDriver";
 import EditDriver from "./pages/EditDriver";
@@ -21,8 +22,11 @@ function Pages() {
       <ControlBar />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Budget />} />
-        <Route path="/budget" element={<Budget />} />
+        <Route path="/" element={<Drivers />} />
+        <Route path="/gross-board" element={<GrossBoard />} />
+        <Route path="/drivers-gross" element={<></>} />
+        <Route path="/dispatchers-gross" element={<></>} />
+        <Route path="/drivers" element={<Drivers />} />
         <Route path="/dispatchers" element={<Dispatchers />} />
         <Route path="/new-driver" element={<NewDriver />} />
         <Route path="/edit-driver/:id" element={<EditDriver />} />

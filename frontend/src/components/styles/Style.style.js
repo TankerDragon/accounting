@@ -204,24 +204,29 @@ export const Style = {
   `,
 
   Table: styled.table`
-    width: 100%;
     border-collapse: collapse;
     padding: 0px;
     margin-top: 40px;
+    overflow: auto;
 
     td,
     th {
       padding: 8px 10px;
       text-align: left;
     }
-    th {
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--color-container);
       border-bottom: 2px solid var(--color-text);
+      z-index: 3;
     }
     tbody tr {
       transition: 0.4s ease;
     }
     tbody tr td {
       white-space: nowrap;
+      border: 1px solid gray;
     }
     tbody tr:hover {
       background: var(--color-tr-hover);
@@ -309,14 +314,15 @@ export const Style = {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3;
+    z-index: 4;
 
     .form {
-      position: absolute;
+      position: fixed;
       background: var(--color-container);
-      width: 700px;
+      width: 80%;
       border-radius: 20px;
       padding: 30px;
+      left: 50%;
       box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
     }
   `,

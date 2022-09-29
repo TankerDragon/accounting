@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+from celery.schedules import crontab
 #
 # import json
 
@@ -169,7 +170,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
-   'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15)
+   'ACCESS_TOKEN_LIFETIME': timedelta(minutes= 2 * 60)
 }
 
 AUTH_USER_MODEL = 'core.User'
@@ -195,6 +196,19 @@ DJOSER = {
 INTERNAL_IPS = [
     '127.0.0.1'
 ]
+
+# celery settings
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'
+
+CELERY_BEAT_SCHEDULE = {
+    'notifyCustomers': {
+        'task': 'api.tasks.notify_customers',
+        'schedule': 5, # every five seconds
+        # 'schedule': crontab(minute='*/15') # every 15 minutes
+        # 'schedule': crontab(day_of_week=1, hour=7, minute=30) # every monday at 7:30 am
+        'args': ['hello world'],
+    }
+}
 
 # HTTPS settings
 # CSRF_COOKIE_SECURE = True

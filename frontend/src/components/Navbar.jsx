@@ -2,11 +2,16 @@ import React from "react";
 import logo from "../images/logo.png";
 // importing icons
 import { FiUserPlus, FiLogOut, FiUsers } from "react-icons/fi";
-import { RiExchangeDollarLine, RiLineChartLine, RiAdminLine } from "react-icons/ri";
+import {
+  RiExchangeDollarLine,
+  RiLineChartLine,
+  RiAdminLine,
+} from "react-icons/ri";
 import { HiOutlineKey } from "react-icons/hi";
 import { BsArchive } from "react-icons/bs";
 // importing styles
 import { Style } from "./styles/Style.style";
+import { FaDollarSign } from "react-icons/fa";
 
 function Navbar() {
   return (
@@ -17,9 +22,9 @@ function Navbar() {
       <h3>Main</h3>
       <ul>
         <li>
-          <Style.SLink to={"/budget"}>
+          <Style.SLink to={"/gross-board"}>
             <RiExchangeDollarLine />
-            Accounting
+            Gross board
           </Style.SLink>
         </li>
         <li>
@@ -35,9 +40,15 @@ function Navbar() {
           </Style.SLink>
         </li>
         <li>
+          <Style.SLink to={"/drivers"}>
+            <FiUsers />
+            Drivers
+          </Style.SLink>
+        </li>
+        <li>
           <Style.SLink to={"/dispatchers"}>
             <FiUsers />
-            All Dispatchers
+            Dispatchers
           </Style.SLink>
         </li>
         <li>
