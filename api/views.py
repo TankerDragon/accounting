@@ -13,7 +13,7 @@ from .serializers import DriverSerializer, DispatcherSerializer, LogSerializer, 
 from core.models import User
 from .models import Driver, Log, LogEdit
 from decimal import Decimal
-from .tasks import notify_customers
+# from .tasks import notify_customers
 import datetime
 
 
@@ -41,8 +41,19 @@ def get_name(id, arr):
 @api_view(['GET', 'PATCH'])
 @permission_classes([AllowAny])
 def test(request):
-    notify_customers.delay('hello')
+    # notify_customers.delay('hello')
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    serializer = UserCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'success': 'created!'}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])

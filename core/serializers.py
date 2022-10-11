@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'role', 'password', 'email', 'first_name', 'last_name']
 
     # def validate_password(self, value: str) -> str:
     #     """    Hash value passed by user.    :param value: password of a user    :return: a hashed version of the password    """    
@@ -14,7 +14,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'role', 'email', 'first_name', 'last_name']
 
     
 

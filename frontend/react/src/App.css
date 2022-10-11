@@ -1,0 +1,53 @@
+:root {
+  --color-container: white;
+  --color-background: #f4f5f7;
+  --color-box-shadow: #b3b3b3;
+  --color-text: #232323;
+  --color-label: #4b4b4b;
+  --color-mode-changer-background: #3e516d;
+  --color-mode-changer-color: #fff;
+  --color-tr-hover: #e3e3e3;
+}
+
+.dark {
+  --color-container: #293649;
+  --color-background: #202a38;
+  --color-box-shadow: #202a38;
+  --color-text: #e7e7e7;
+  --color-label: #dbdbdb;
+  --color-mode-changer-background: rgb(233, 233, 233);
+  --color-mode-changer-color: rgb(47, 47, 47);
+  --color-tr-hover: #35455c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif;
+}
+.App {
+  color: var(--color-text);
+}
+/* scroller */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 5px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #fc8139;
+  border-radius: 5px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(175, 116, 33);
+}
