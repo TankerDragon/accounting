@@ -51,7 +51,26 @@ export const Style = {
     }
   `,
 
-  Buttons: styled.div``,
+  Buttons: styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+
+    div {
+      width: 290px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    button {
+      cursor: pointer;
+      width: 135px;
+      padding: 8px 0;
+      border: 1px solid #4b4b4b;
+      border-radius: 5px;
+    }
+  `,
 
   InputField: styled.div`
     margin-top: 30px;
@@ -305,6 +324,25 @@ export const Style = {
       padding: 30px;
       left: 50%;
       box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
+    }
+  `,
+  LoginContainer: styled.div`
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--color-background);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    .container {
+      background: var(--color-container);
+      box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
+      border-radius: 15px;
+      padding: 30px;
+      padding-bottom: 50px;
     }
   `,
   ControlBar: styled.div`

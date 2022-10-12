@@ -8,6 +8,7 @@ import { Style } from "../styles/Style.style";
 function DriverArchive() {
   const fixTime = (dateTime) => {
     const time = new Date(dateTime);
+    console.log(typeof time.getTime);
     return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
   };
 
@@ -22,7 +23,8 @@ function DriverArchive() {
   const getLogs = async () => {
     const response = await fetch(`/api/archive/` + params.id, {
       headers: {
-        Authorization: "JWT " + JSON.parse(localStorage.getItem("authentication")).access,
+        Authorization:
+          "JWT " + JSON.parse(localStorage.getItem("authentication")).access,
       },
     });
     if (response.status === 401) {
@@ -74,9 +76,29 @@ function DriverArchive() {
                   <td>{log.change}</td>
                   <td>{log.total_miles}</td>
                   <td>
-                    {log.status === "CO" ? "Covered" : log.status === "SO" ? "Sold" : log.status === "TO" ? "Tonu" : log.status === "RJ" ? "Rejected" : log.status === "RM" ? "Removed" : "***error"}
+                    {log.status === "CO"
+                      ? "Covered"
+                      : log.status === "SO"
+                      ? "Sold"
+                      : log.status === "TO"
+                      ? "Tonu"
+                      : log.status === "RJ"
+                      ? "Rejected"
+                      : log.status === "RM"
+                      ? "Removed"
+                      : "***error"}
                   </td>
-                  <td>{log.budget_type === "D" ? "Driver's" : log.budget_type === "L" ? "Lane" : log.budget_type === "R" ? "Recovery" : log.budget_type === "S" ? "Dirilis" : "***error"}</td>
+                  <td>
+                    {log.budget_type === "D"
+                      ? "Driver's"
+                      : log.budget_type === "L"
+                      ? "Lane"
+                      : log.budget_type === "R"
+                      ? "Recovery"
+                      : log.budget_type === "S"
+                      ? "Dirilis"
+                      : "***error"}
+                  </td>
                   <td>{log.autobooker ? "yes" : ""}</td>
                   <td>{fixTime(log.date)}</td>
                   <td>{log.user}</td>

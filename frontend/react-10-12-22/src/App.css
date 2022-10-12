@@ -20,6 +20,17 @@
   --color-tr-hover: #35455c;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif;
+}
+.App {
+  color: var(--color-text);
+}
 /* scroller */
 /* width */
 ::-webkit-scrollbar {
