@@ -1,0 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif;
+}
+.App {
+  color: var(--color-text);
+}
+.pages {
+  background: var(--color-background);
+  position: fixed;
+  right: 0;
+  width: calc(100% - 220px);
+  height: 100vh;
+  overflow: auto;
+}
+.login {
+  background: var(--color-background);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login form {
+  background: var(--color-container);
+  box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
+  border-radius: 15px;
+  padding: 30px;
+  padding-bottom: 50px;
+}
+.login form h1 {
+  font-size: 1.7rem;
+}
+/*  */
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+.buttons div {
+  width: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.buttons button {
+  cursor: pointer;
+  width: 135px;
+  padding: 8px 0;
+  border: 1px solid #4b4b4b;
+  border-radius: 5px;
+}
+/*  */
+.errmsg {
+  color: red;
+  margin-top: 20px;
+}
+.offscreen {
+  display: none;
+}
+/*  */

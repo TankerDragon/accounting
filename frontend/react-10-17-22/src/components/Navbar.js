@@ -2,16 +2,11 @@ import React from "react";
 import logo from "../images/logo.png";
 // importing icons
 import { FiUserPlus, FiLogOut, FiUsers } from "react-icons/fi";
-import {
-  RiExchangeDollarLine,
-  RiLineChartLine,
-  RiAdminLine,
-} from "react-icons/ri";
+import { RiExchangeDollarLine, RiLineChartLine, RiAdminLine } from "react-icons/ri";
 import { HiOutlineKey } from "react-icons/hi";
 import { BsArchive } from "react-icons/bs";
 // importing styles
 import { Style } from "./styles/Style.style";
-import { FaDollarSign } from "react-icons/fa";
 
 function Navbar() {
   return (

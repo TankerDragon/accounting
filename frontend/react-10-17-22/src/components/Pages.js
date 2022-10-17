@@ -3,7 +3,7 @@ import { ROLES } from "../App";
 import RequireAuth from "./RequireAuth";
 import Navbar from "./Navbar";
 import ControlBar from "./ControlBar";
-import GrossBoard from "./pages/GrossBoard/GrossBoard";
+import GrossBoard from "./pages/GrossBoard";
 
 const Pages = () => {
   return (

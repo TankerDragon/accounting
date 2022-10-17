@@ -21,13 +21,13 @@ const ControlBar = () => {
 
   return (
     <Style.ControlBar>
-      <Style.Row>
+      <div className="row">
         <p>*Control panel</p>
         <Style.ModeChanger onClick={changeMode}>
           {isDarkMode && <TbSun />}
           {!isDarkMode && <TbMoonStars />}
         </Style.ModeChanger>
-      </Style.Row>
+      </div>
     </Style.ControlBar>
   );
 };

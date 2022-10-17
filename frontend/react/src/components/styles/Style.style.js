@@ -27,65 +27,13 @@ export const Style = {
     }
   `,
 
-  Container: styled.div`
-    background: var(--color-container);
-    width: calc(100% - 40px);
-    margin: auto;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    min-height: 80vh;
-    border-radius: 20px;
-    padding: 20px;
-    z-index: 2;
-    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
-  `,
+  Container: styled.div``,
 
-  Row: styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    h1 {
-      font-size: 1.5rem;
-      color: var(--color-text);
-    }
-  `,
+  Row: styled.div``,
 
   Buttons: styled.div``,
 
-  InputField: styled.div`
-    margin-top: 30px;
-    width: 300px;
-
-    label {
-      color: var(--color-label);
-      display: block;
-      font-size: 0.9rem;
-      margin-bottom: 5px;
-      white-space: nowrap;
-    }
-    input,
-    select {
-      outline: none;
-      width: 100%;
-      font-size: 1rem;
-      padding: 7px 10px;
-      border-radius: 20px;
-      border: 1px solid #4b4b4b;
-    }
-    select {
-      width: 100%;
-    }
-    input[type="checkbox"] {
-      /* Double-sized Checkboxes */
-      -ms-transform: scale(1.5); /* IE */
-      -moz-transform: scale(1.5); /* FF */
-      -webkit-transform: scale(1.5); /* Safari and Chrome */
-      -o-transform: scale(1.5); /* Opera */
-      transform: scale(1.5);
-      padding: 10px;
-    }
-  `,
+  InputField: styled.div``,
 
   SLink: styled(NavLink)`
     padding: 10px 15px;
@@ -134,20 +82,7 @@ export const Style = {
     }
   `,
 
-  SButton: styled(Link)`
-    padding: 12px 18px;
-    background: #fc6c19;
-    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    color: white;
-    transition: 0.3s ease;
-    font-weight: bold;
-    &:hover {
-      transform: translateY(-5px);
-    }
-  `,
+  SButton: styled(Link)``,
 
   STable: styled.table`
     width: 100%;
@@ -184,94 +119,7 @@ export const Style = {
     }
   `,
 
-  Table: styled.table`
-    border-collapse: collapse;
-    padding: 0px;
-    margin-top: 40px;
-    overflow: auto;
-
-    td,
-    th {
-      padding: 8px 10px;
-      text-align: left;
-    }
-    thead th {
-      position: sticky;
-      top: 0;
-      background: var(--color-container);
-      border-bottom: 2px solid var(--color-text);
-      z-index: 3;
-    }
-    tbody tr {
-      transition: 0.4s ease;
-    }
-    tbody tr td {
-      white-space: nowrap;
-      border: 1px solid gray;
-    }
-    tbody tr:hover {
-      background: var(--color-tr-hover);
-    }
-    a {
-      width: 100%;
-      display: block;
-      text-decoration: none;
-      color: black;
-    }
-    .actions {
-      width: 130px;
-      height: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      opacity: 0.6;
-      transition: 0.3s ease;
-      .icon-holder {
-        position: relative;
-        width: 27px;
-        height: 27px;
-        background-color: rgb(77, 77, 77);
-        border-radius: 50%;
-        cursor: pointer;
-        .icon {
-          font-size: 1.3rem;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
-      .icon-holder:active {
-        background-color: gray;
-      }
-
-      .edit {
-        color: rgb(247, 177, 64);
-      }
-      .dollar {
-        color: rgb(240, 212, 0);
-      }
-      .clock {
-        color: rgb(83, 206, 255);
-      }
-      .profile {
-        color: rgb(33, 221, 13);
-      }
-      .cross {
-        color: rgb(255, 91, 91);
-        font-size: 1rem !important;
-      }
-
-      .msg a {
-        color: green;
-        font-style: italic;
-        font-weight: bold;
-      }
-    }
-    tbody tr:hover .actions {
-      opacity: 1;
-    }
-  `,
+  Table: styled.table``,
 
   Graph: styled.div`
     width: 100%;

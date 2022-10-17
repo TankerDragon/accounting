@@ -196,14 +196,14 @@ def edit_dispatcher(request, id):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def archive(request, date):
+@permission_classes([AllowAny])
+def archive(request):
     if request.method == 'GET':
         # queryset = Log.objects.filter(date = date, is_edited = False).order_by('-date')
 
         log_edits = LogEdit.objects.all().values('edited_log')
         logEdits_list = list(map(lambda l: l['edited_log'], log_edits))
-        queryset = Log.objects.filter(date = date, is_edited = False).order_by('-date')
+        queryset = Log.objects.filter( is_edited = False).order_by('-date')
         
         #preparing driver names
         driver_ids = list(map(lambda q: q.driver_id, queryset))

@@ -23,9 +23,8 @@ urlpatterns = [
     path('new-dispatcher/', views.new_dispatcher),
     path('edit-driver/<int:id>', views.edit_driver),
     path('edit-dispatcher/<int:id>', views.edit_dispatcher),
-    path('archive/<date>', views.archive),
+    path('gross/', views.archive),
     # path('archive/<int:id>', views.driver_archive),
     path('edit-log/<int:id>', views.edit_log),
     path('archive/edits/<int:id>', views.archive_edits),
-
 ]
