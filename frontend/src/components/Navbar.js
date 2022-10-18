@@ -1,86 +1,85 @@
-import React from "react";
 import logo from "../images/logo.png";
+import { NavLink } from "react-router-dom";
 // importing icons
 import { FiUserPlus, FiLogOut, FiUsers } from "react-icons/fi";
 import { RiExchangeDollarLine, RiLineChartLine, RiAdminLine } from "react-icons/ri";
 import { HiOutlineKey } from "react-icons/hi";
 import { BsArchive } from "react-icons/bs";
-// importing styles
-import { Style } from "./styles/Style.style";
 
 function Navbar() {
   return (
-    <Style.Nav>
+    <div className="navbar">
       <div className="logo-container">
         <img src={logo} alt="logo" width={150} />
       </div>
       <h3>Main</h3>
       <ul>
         <li>
-          <Style.SLink to={"/gross-board"}>
+          <NavLink className="link" to={"/gross-board"}>
             <RiExchangeDollarLine />
             Gross board
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SLink to={"/drivers-gross"}>
+          <NavLink className="link" to={"/driver-gross"}>
             <RiLineChartLine />
             Drivers' gross
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SLink to={"/dispatchers-gross"}>
+          <NavLink className="link" to={"/dispatcher-gross"}>
             <RiLineChartLine />
             Dispatchers' gross
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SLink to={"/drivers"}>
+          <NavLink className="link" to={"/drivers"}>
             <FiUsers />
             Drivers
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SLink to={"/dispatchers"}>
+          <NavLink className="link" to={"/dispatchers"}>
             <FiUsers />
             Dispatchers
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SLink to={"/new-driver"}>
+          <NavLink className="link" to={"/updaters"}>
+            <FiUsers />
+            Updaters
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="link" to={"/new-user"}>
             <FiUserPlus />
-            Add Driver
-          </Style.SLink>
+            Add User
+          </NavLink>
         </li>
         <li>
-          <Style.SLink to={"/new-dispatcher"}>
-            <FiUserPlus />
-            Add Dispatcher
-          </Style.SLink>
-        </li>
-        <li>
-          <Style.SLink to={"/archive"}>
+          <NavLink className="link" to={"/archive"}>
             <BsArchive />
             Archive
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SAncer href={"/admin"}>
+          <a className="ancer" href={"/admin"}>
             <RiAdminLine />
             Admin panel
-          </Style.SAncer>
+          </a>
         </li>
       </ul>
       <h3>Actions</h3>
       <ul>
         <li>
-          <Style.SLink to={"/reset-password"}>
+          <NavLink className="link" to={"/reset-password"}>
             <HiOutlineKey />
             Reset password
-          </Style.SLink>
+          </NavLink>
         </li>
         <li>
-          <Style.SLink
+          <NavLink
+            className="link"
             to={"/login"}
             onClick={() => {
               localStorage.setItem("authentication", JSON.stringify({}));
@@ -88,10 +87,10 @@ function Navbar() {
           >
             <FiLogOut />
             Log out
-          </Style.SLink>
+          </NavLink>
         </li>
       </ul>
-    </Style.Nav>
+    </div>
   );
 }
 

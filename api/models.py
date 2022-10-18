@@ -86,10 +86,9 @@ STATES = [
 # settings.AUTH_USER_MODEL
 class Driver(models.Model):
     dispatcher = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    d_budget = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True, default=0)
-    l_budget = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True, default=0)
-    r_budget = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True, default=0)
-    s_budget = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True, default=0)
+    d_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    l_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
+    r_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     driver_type = models.CharField(max_length=3, choices=DRIVER_TYPE)

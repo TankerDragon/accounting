@@ -13,7 +13,9 @@ const Pages = () => {
       <Routes>
         <Route element={<RequireAuth allowedRoles={[ROLES.Owner, ROLES.Admin, ROLES.Dispatcher, ROLES.Updater]} />}>
           <Route path="gross-board" element={<GrossBoard />} />
-          <Route path="gross-board2" element={<GrossBoard />} />
+          <Route path="dispatchers" element={<GrossBoard />} />
+          <Route path="updaters" element={<GrossBoard />} />
+          <Route path="drivers" element={<GrossBoard />} />
         </Route>
       </Routes>
     </div>

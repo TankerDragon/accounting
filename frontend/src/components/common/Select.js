@@ -1,9 +1,13 @@
-const Select = ({ name, label, value, onChange, selections, error }) => {
-  const data = [];
+const Select = ({ name, label, value, onChange, selections, isObject = false, error }) => {
+  let data = [];
 
-  Object.keys(selections).forEach((s) => {
-    data.push([s, selections[s]]);
-  });
+  if (isObject) {
+    Object.keys(selections).forEach((s) => {
+      data.push([s, selections[s]]);
+    });
+  } else {
+    data = selections;
+  }
 
   return (
     <div className="input">

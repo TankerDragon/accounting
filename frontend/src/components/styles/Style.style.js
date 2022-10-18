@@ -2,30 +2,7 @@ import styled from "styled-components";
 import { Link, NavLink } from "react-router-dom";
 
 export const Style = {
-  Nav: styled.div`
-    background: var(--color-container);
-    position: fixed;
-    left: 0;
-    width: 220px;
-    height: 100vh;
-    /* color: #1d1d1d; */
-    color: var(--color-text);
-    z-index: 2;
-    box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 10px 0 30px 0;
-    }
-
-    h3 {
-      font-size: 1rem;
-      font-weight: bolder;
-      margin: 25px 0 10px 15px;
-    }
-  `,
+  Nav: styled.div``,
 
   Container: styled.div``,
 
@@ -35,52 +12,9 @@ export const Style = {
 
   InputField: styled.div``,
 
-  SLink: styled(NavLink)`
-    padding: 10px 15px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--color-text);
-    transition: 0.5s ease;
+  SLink: styled(NavLink)``,
 
-    svg {
-      font-size: 1.2rem;
-      margin-right: 10px;
-    }
-    :hover {
-      cursor: pointer;
-      background: #fc6c19;
-      color: white;
-      border-left: 5px solid black;
-    }
-    &.active {
-      background: #fc6c19;
-      color: white;
-      border-left: 5px solid black;
-    }
-  `,
-
-  SAncer: styled.a`
-    padding: 10px 15px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--color-text);
-    transition: 0.5s ease;
-
-    svg {
-      font-size: 1.2rem;
-      margin-right: 10px;
-    }
-    :hover {
-      cursor: pointer;
-      background: #fc6c19;
-      color: white;
-      border-left: 5px solid black;
-    }
-  `,
+  SAncer: styled.a``,
 
   SButton: styled(Link)``,
 

@@ -2,12 +2,13 @@ import { Link, useNavigate } from "react-router-dom";
 // import icons
 import { BsPencil } from "react-icons/bs";
 
+const fixDate = (dateTime) => {
+  const time = new Date(dateTime);
+  return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
+};
+
 const Table = ({ logs }) => {
   const navigate = useNavigate();
-  const fixTime = (dateTime) => {
-    const time = new Date(dateTime);
-    return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
-  };
 
   return (
     <table className="table">
@@ -20,6 +21,7 @@ const Table = ({ logs }) => {
           <th>Dispatcher</th>
           <th>Truck</th>
           <th>Trailer</th>
+          <th>Driver's name</th>
           <th>Original rate</th>
           <th>Current rate</th>
           <th>Change</th>
@@ -40,6 +42,15 @@ const Table = ({ logs }) => {
           return (
             <tr key={log.id}>
               <td>{index + 1}</td>
+              <td>{log.pcs_number}</td>
+              <td>{log.bol_number}</td>
+              <td>
+                {log.date} & {log.time}
+              </td>
+              <td>{log.user}</td>
+              <td>{log.truck}</td>
+              <td>{log.trailer}</td>
+              <td>{log.name}</td>
               <td>{log.original_rate}</td>
               <td>{log.current_rate}</td>
               <td>{log.change}</td>
@@ -47,12 +58,6 @@ const Table = ({ logs }) => {
               <td>{log.status === "CO" ? "Covered" : log.status === "SO" ? "Sold" : log.status === "TO" ? "Tonu" : log.status === "RJ" ? "Rejected" : log.status === "RM" ? "Removed" : "***error"}</td>
               <td>{log.budget_type === "D" ? "Driver's" : log.budget_type === "L" ? "Lane" : log.budget_type === "R" ? "Recovery" : log.budget_type === "S" ? "Dirilis" : "***error"}</td>
               <td>{log.autobooker ? "yes" : ""}</td>
-              <td>{fixTime(log.date)}</td>
-              <td>{log.user}</td>
-              <td>{log.bol_number}</td>
-              <td>{log.pcs_number}</td>
-              <td>{log.truck}</td>
-              <td>{log.trailer}</td>
               <td>{log.origin}</td>
               <td>{log.origin_state}</td>
               <td>{log.destination}</td>

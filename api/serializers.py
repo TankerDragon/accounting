@@ -26,6 +26,11 @@ class DriversBoardSerializer(ModelSerializer):
     class Meta:
         model = Driver
         fields = ['id', 'dispatcher', 'first_name', 'last_name', 'gross_target']
+
+class DriverNameSerializer(ModelSerializer):
+    class Meta:
+        model = Driver
+        fields = ['id', 'first_name', 'last_name']
     
 
 class DispatcherSerializer(ModelSerializer):

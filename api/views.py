@@ -9,7 +9,7 @@ from rest_framework import status
 from django.conf import settings
 from django.db.models import Q
 from core.serializers import UserSerializer, UserCreateSerializer
-from .serializers import DriverSerializer, DispatcherSerializer, LogSerializer, CreateDriverSerializer, CreateDispatcherSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
+from .serializers import DriverSerializer, DriverNameSerializer, DispatcherSerializer, LogSerializer, CreateDriverSerializer, CreateDispatcherSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
 from core.models import User
 from .models import Driver, Log, LogEdit
 from decimal import Decimal
@@ -23,7 +23,6 @@ WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 
 
 
 #funtions
- 
 def get_week_start():
     now = datetime.datetime.now()
     now = now.replace(hour=0, minute=0, second=0)
@@ -68,6 +67,7 @@ def main(request):
             
     if request.method == "POST":
         data = request.data
+        print(data)
         budget_type = request.data['budget_type']
         check_decimal_places = LogDecimalFielsSerializer(data=data)
         if check_decimal_places.is_valid():
@@ -208,6 +208,7 @@ def archive(request):
         #preparing driver names
         driver_ids = list(map(lambda q: q.driver_id, queryset))
         driver_names = Driver.objects.filter(pk__in = driver_ids).values('id', 'first_name', 'last_name')
+        driver_names_serializer = DriverNameSerializer(driver_names, many=True)
 
         log_serializer = LogSerializer(queryset, many=True)
 
@@ -218,7 +219,7 @@ def archive(request):
             if query["id"] in logEdits_list:
                 query["edited_link"] = True
 
-        return Response(log_serializer.data, status=status.HTTP_200_OK)
+        return Response({"logs": log_serializer.data, "drivers": driver_names_serializer.data}, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

@@ -71,6 +71,8 @@ const Login = () => {
         // withCredentials: true,
       });
 
+      console.log(response);
+
       const accessToken = response?.data?.access;
       const payload = JWTDecoder(accessToken);
       const roles = [payload.role];

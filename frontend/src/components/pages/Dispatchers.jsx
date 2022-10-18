@@ -1,13 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 // import incons
-import { FaDollarSign } from "react-icons/fa";
 import { FiClock, FiUser } from "react-icons/fi";
 import { ImCross } from "react-icons/im";
 // import styles
 import { Style } from "../styles/Style.style";
 
-function Dispatchers() {
+const Dispatchers = () => {
   const navigate = useNavigate();
 
   const fixTime = (dateTime) => {
@@ -86,6 +85,6 @@ function Dispatchers() {
       </Style.Table>
     </Style.Container>
   );
-}
+};
 
 export default Dispatchers;

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
 import Checkbox from "../../common/Checkbox";
 
-const GROSS_URL = "/api/gross/";
+const GROSS_URL = "/api/budget/";
 
 const BUDGET_TYPE = {
   D: "Driver's budget",
@@ -80,30 +79,19 @@ const STATES = {
   WY: "Wyoming",
 };
 
-const GrossForm = () => {
+const GrossForm = ({ drivers, closeForm }) => {
   const { auth } = useAuth();
 
   const [errors, setErrors] = useState({});
 
   const [errMsg, setErrMsg] = useState("");
 
-  // const schema = {
-  //   // driver: Joi.string().required().label("Driver"),
-  //   original_rate: Joi.string().required().label("Driver"),
-  //   current_rate: Joi.string().required().label("Driver"),
-  //   budget_type: Joi.string().required().label("Driver"),
-  //   total_miles: "",
-  //   bol_number: "",
-  //   pcs_number: "",
-  //   trailer: "",
-  //   truck: "",
-  //   status: "CO",
-  //   origin: "",
-  //   origin_state: "OH",
-  //   destination: "",
-  //   destination_state: "OH",
-  //   note: "",
-  // };
+  // preparing drivers selections for form
+  const DRIVERS = [];
+  DRIVERS.push(["", "--------"]);
+  for (let driver of drivers) {
+    DRIVERS.push([driver.id, driver.first_name + " " + driver.last_name]);
+  }
 
   const [log, setLog] = useState({
     driver: "",
@@ -135,12 +123,6 @@ const GrossForm = () => {
     console.log(log.autobooker);
   };
 
-  const navigate = useNavigate();
-
-  const redirectBack = () => {
-    navigate("/budget");
-  };
-
   // const validate = () => {
   //   const result = Joi.validate(login, schema, { abortEarly: false });
   //   if (!result.error) return null;
@@ -157,6 +139,8 @@ const GrossForm = () => {
     // console.log(errors);
     // if (errors) return;
     console.log("submitted");
+    setErrMsg("");
+    setErrors({});
 
     // post to server
     try {
@@ -165,7 +149,9 @@ const GrossForm = () => {
         // withCredentials: true,
       });
       console.log(response);
+      if (response.status === 200) closeForm({ reload: true });
     } catch (err) {
+      console.log(err);
       if (!err?.response) {
         setErrMsg("No Server Response");
       } else if (err.response?.status === 400) {
@@ -188,15 +174,21 @@ const GrossForm = () => {
 
   return (
     <div className="gross-form">
+      <div className="row">
+        <h1>Add new Gross</h1>
+      </div>
       <form onSubmit={handleSubmit}>
+        <div className="row">
+          <Select name="driver" selections={DRIVERS} isObject={false} value={log.driver} label="Driver" onChange={handleChange} error={errors.driver} />
+        </div>
         <div className="row">
           <Input name="original_rate" type="number" value={log.original_rate} label="Original rate*" onChange={handleChange} error={errors.original_rate} />
           <Input name="current_rate" type="number" value={log.current_rate} label="Current rate*" onChange={handleChange} error={errors.current_rate} />
-          <Input name="change" type="number" value={log.original_rate - log.current_rate} label="Change" />
+          <Input name="change" type="number" value={log.original_rate - log.current_rate} label="Change" onChange={() => {}} />
         </div>
         <div className="row">
           <Input name="total_miles" type="number" value={log.total_miles} label="Total miles*" onChange={handleChange} error={errors.total_miles} />
-          <Select name="budget_type" selections={BUDGET_TYPE} value={log.budget_type} label="Budget type*" onChange={handleChange} error={errors.budget_type} />
+          <Select name="budget_type" selections={BUDGET_TYPE} isObject={true} value={log.budget_type} label="Budget type*" onChange={handleChange} error={errors.budget_type} />
           <Checkbox name="autobooker" checked={log.autobooker} label="Booked by Autobooker" onChange={handleChange} error={errors.autobooker} />
         </div>
         <div className="row">
@@ -207,21 +199,21 @@ const GrossForm = () => {
         <div className="row">
           <Input name="truck" type="text" value={log.truck} label="Truck*" onChange={handleChange} error={errors.truck} />
           <Input name="trailer" type="text" value={log.trailer} label="Trailer*" onChange={handleChange} error={errors.trailer} />
-          <Select name="status" selections={GROSS_STATUS} value={log.status} label="Status*" onChange={handleChange} error={errors.status} />
+          <Select name="status" selections={GROSS_STATUS} isObject={true} value={log.status} label="Status*" onChange={handleChange} error={errors.status} />
         </div>
         <div className="row">
           <Input name="origin" type="text" value={log.origin} label="Origin*" onChange={handleChange} error={errors.origin} />
-          <Select name="origin_state" selections={STATES} value={log.origin_state} label="Origin State*" onChange={handleChange} error={errors.origin_state} />
+          <Select name="origin_state" selections={STATES} isObject={true} value={log.origin_state} label="Origin State*" onChange={handleChange} error={errors.origin_state} />
           <Input name="destination" type="text" value={log.destination} label="Destination*" onChange={handleChange} error={errors.destination} />
-          <Select name="destination_state" selections={STATES} value={log.destination_state} label="Destination State*" onChange={handleChange} error={errors.destination_state} />
+          <Select name="destination_state" selections={STATES} isObject={true} value={log.destination_state} label="Destination State*" onChange={handleChange} error={errors.destination_state} />
         </div>
         <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
           {errMsg}
         </p>
         <div className="buttons">
           <div>
-            <button onClick={redirectBack}>Cancel</button>
             <button>OK</button>
+            <button onClick={closeForm}>Cancel</button>
           </div>
         </div>
       </form>
