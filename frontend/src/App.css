@@ -225,6 +225,9 @@ body {
   border-bottom: 2px solid var(--color-text);
   z-index: 3;
 }
+.table thead tr {
+  white-space: nowrap;
+}
 .table tbody tr {
   transition: 0.4s ease;
 }

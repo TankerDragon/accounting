@@ -104,7 +104,8 @@ class Driver(models.Model):
 
 class Log(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    dispatcher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dispatcher')
     original_rate = models.DecimalField(max_digits=9, decimal_places=2)
     current_rate = models.DecimalField(max_digits=9, decimal_places=2)
     change = models.DecimalField(max_digits=9, decimal_places=2)

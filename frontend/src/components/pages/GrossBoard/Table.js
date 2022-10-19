@@ -7,13 +7,20 @@ const fixDate = (dateTime) => {
   return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
 };
 
-const Table = ({ logs }) => {
+const getName = (id, names) => {
+  for (let name of names) {
+    if (name.id === id) return name.first_name + " " + name.last_name;
+  }
+  return "! name not found !";
+};
+
+const Table = ({ logs, drivers, dispatchers }) => {
   const navigate = useNavigate();
 
   return (
     <table className="table">
       <thead>
-        <tr style={{ whiteSpace: "nowrap" }}>
+        <tr>
           <th>№</th>
           <th>PCS number</th>
           <th>Load ID</th>
@@ -41,16 +48,16 @@ const Table = ({ logs }) => {
         {logs.map((log, index) => {
           return (
             <tr key={log.id}>
-              <td>{index + 1}</td>
+              <td>{log.user}</td>
               <td>{log.pcs_number}</td>
               <td>{log.bol_number}</td>
               <td>
                 {log.date} & {log.time}
               </td>
-              <td>{log.user}</td>
+              <td>{getName(log.dispatcher, dispatchers)}</td>
               <td>{log.truck}</td>
               <td>{log.trailer}</td>
-              <td>{log.name}</td>
+              <td>{getName(log.driver, drivers)}</td>
               <td>{log.original_rate}</td>
               <td>{log.current_rate}</td>
               <td>{log.change}</td>

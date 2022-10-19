@@ -1,4 +1,3 @@
-import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import axios from "../../../api/axios";
@@ -8,13 +7,11 @@ import GrossForm from "./GrossForm";
 const GROSS_URL = "/api/gross/";
 
 const GrossBoard = () => {
-  let params = useParams();
-  const navigate = useNavigate();
-
   const { auth } = useAuth();
 
   const [logs, setLogs] = useState([]);
   const [drivers, setDrivers] = useState([]);
+  const [dispatchers, setDispatchers] = useState([]);
 
   const [formOpen, setFormOpen] = useState(false);
 
@@ -37,6 +34,7 @@ const GrossBoard = () => {
     console.log("***data", response);
     setLogs(response.data.logs);
     setDrivers(response.data.drivers);
+    setDispatchers(response.data.dispatchers);
   };
 
   return (
@@ -48,9 +46,9 @@ const GrossBoard = () => {
         </button>
       </div>
       <div style={{ overflow: "auto", height: "80vh" }}>
-        <Table logs={logs} />
+        <Table logs={logs} drivers={drivers} dispatchers={dispatchers} />
       </div>
-      {formOpen && <GrossForm drivers={drivers} closeForm={closeForm} />}
+      {formOpen && <GrossForm drivers={drivers} dispatchers={dispatchers} closeForm={closeForm} />}
     </div>
   );
 };

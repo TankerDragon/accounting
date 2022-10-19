@@ -79,22 +79,29 @@ const STATES = {
   WY: "Wyoming",
 };
 
-const GrossForm = ({ drivers, closeForm }) => {
+const GrossForm = ({ drivers, closeForm, dispatchers }) => {
   const { auth } = useAuth();
 
   const [errors, setErrors] = useState({});
 
   const [errMsg, setErrMsg] = useState("");
 
-  // preparing drivers selections for form
+  // preparing drivers selections for the form
   const DRIVERS = [];
   DRIVERS.push(["", "--------"]);
   for (let driver of drivers) {
     DRIVERS.push([driver.id, driver.first_name + " " + driver.last_name]);
   }
+  // preparing dispatchers selections for the form
+  const DISPATCHERS = [];
+  DISPATCHERS.push(["", "--------"]);
+  for (let dispatcher of dispatchers) {
+    DISPATCHERS.push([dispatcher.id, dispatcher.first_name + " " + dispatcher.last_name]);
+  }
 
   const [log, setLog] = useState({
     driver: "",
+    dispatcher: "",
     original_rate: "",
     current_rate: "",
     budget_type: "D",
@@ -180,6 +187,8 @@ const GrossForm = ({ drivers, closeForm }) => {
       <form onSubmit={handleSubmit}>
         <div className="row">
           <Select name="driver" selections={DRIVERS} isObject={false} value={log.driver} label="Driver" onChange={handleChange} error={errors.driver} />
+          <Select name="dispatcher" selections={DISPATCHERS} isObject={false} value={log.dispatcher} label="Dispatcher" onChange={handleChange} error={errors.dispatcher} />
+          <div></div>
         </div>
         <div className="row">
           <Input name="original_rate" type="number" value={log.original_rate} label="Original rate*" onChange={handleChange} error={errors.original_rate} />

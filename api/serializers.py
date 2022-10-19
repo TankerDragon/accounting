@@ -38,13 +38,19 @@ class DispatcherSerializer(ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'date_joined']
 
+class DispatcherNameSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name']
+
 class LogSerializer (ModelSerializer):
     class Meta:
         model = Log
         fields = [
             'id', 
-            'driver', 
             'user', 
+            'driver', 
+            'dispatcher', 
             'budget_type', 
             'autobooker', 
             'current_rate', 
