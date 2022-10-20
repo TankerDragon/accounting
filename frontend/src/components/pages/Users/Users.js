@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 // import incons
 import { FiClock, FiUser } from "react-icons/fi";
 import { ImCross } from "react-icons/im";
-// import styles
-import { Style } from "../styles/Style.style";
 
-const Dispatchers = () => {
+const Users = () => {
   const navigate = useNavigate();
 
   const fixTime = (dateTime) => {
@@ -38,12 +36,12 @@ const Dispatchers = () => {
   };
 
   return (
-    <Style.Container>
-      <Style.Row>
+    <div className="page-container">
+      <div className="row">
         <h1>Dispatchers</h1>
-        <Style.SButton to={"/new-dispatcher"}>Add Dispatcher</Style.SButton>
-      </Style.Row>
-      <Style.Table>
+        <button className="button">Add Dispatcher</button>
+      </div>
+      <table className="table">
         <thead>
           <tr>
             <th>№</th>
@@ -82,9 +80,9 @@ const Dispatchers = () => {
             );
           })}
         </tbody>
-      </Style.Table>
-    </Style.Container>
+      </table>
+    </div>
   );
 };
 
-export default Dispatchers;
+export default Users;

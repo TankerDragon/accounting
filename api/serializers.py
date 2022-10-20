@@ -20,7 +20,7 @@ class DriverSerializer(ModelSerializer):
     # app_version = serializers.CharField(read_only=True)
     class Meta:
         model = Driver
-        fields = ['id', 'dispatcher', 'd_budget', 'l_budget', 'r_budget', 's_budget', 'first_name', 'last_name', 'driver_type', 'gross_target', 'is_active']
+        fields = ['id',  'first_name', 'last_name', 'dispatcher', 'driver_type', 'gross_target', 'is_active']
 
 class DriversBoardSerializer(ModelSerializer):
     class Meta:

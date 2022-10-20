@@ -1,56 +1,52 @@
 import { useEffect, useState } from "react";
-import useAuth from "../../../hooks/useAuth";
 import axios from "../../../api/axios";
-import GrossTable from "./GrossTable";
-import GrossForm from "./GrossForm";
+import useAuth from "../../../hooks/useAuth";
+import DriversTable from "./DriversTable";
+import DriversForm from "./DriversForm";
 
-const GROSS_URL = "/api/gross/";
+const DRIVERS_URL = "/api/drivers/";
 
-const GrossBoard = () => {
+const Drivers = () => {
   const { auth } = useAuth();
 
-  const [logs, setLogs] = useState([]);
   const [drivers, setDrivers] = useState([]);
-  const [dispatchers, setDispatchers] = useState([]);
 
   const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
-    getLogs();
+    getDrivers();
   }, []);
 
   const closeForm = ({ reload }) => {
     setFormOpen(false);
     if (reload) {
-      getLogs();
+      getDrivers();
     }
   };
 
-  const getLogs = async () => {
-    const response = await axios.get(GROSS_URL, {
+  const getDrivers = async () => {
+    const response = await axios.get(DRIVERS_URL, {
       headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
       // withCredentials: true,
     });
     console.log("***data", response);
-    setLogs(response.data.logs);
-    setDrivers(response.data.drivers);
-    setDispatchers(response.data.dispatchers);
+    setDrivers(response.data);
   };
 
   return (
     <div className="page-container">
       <div className="row">
-        <h1>Driver archive</h1>
+        <h1>Drivers</h1>
         <button className="button" onClick={() => setFormOpen(!formOpen)}>
-          New Gross
+          New Driver
         </button>
       </div>
       <div style={{ overflow: "auto", height: "80vh" }}>
-        <GrossTable logs={logs} drivers={drivers} dispatchers={dispatchers} />
+        <DriversTable drivers={drivers} />
       </div>
-      {formOpen && <GrossForm drivers={drivers} dispatchers={dispatchers} closeForm={closeForm} />}
+      {formOpen && <DriversForm closeForm={closeForm} />}
     </div>
   );
 };
 
-export default GrossBoard;
+export default Drivers;

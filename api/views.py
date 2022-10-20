@@ -102,24 +102,25 @@ def main(request):
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def new_driver(request):
-    
-    if request.user.is_superuser:
-        if request.method == 'GET':
-            dispatchers = User.objects.filter(is_superuser = False).values('id', 'username')
-            dispatchers_list = [{'id': dispatcher["id"], 'username': dispatcher["username"]} for dispatcher in dispatchers]
+def drivers(request):
+    if request.method == 'GET':
+        # dispatchers = User.objects.filter(is_superuser = False).values('id', 'username')
+        # dispatchers_list = [{'id': dispatcher["id"], 'username': dispatcher["username"]} for dispatcher in dispatchers]
 
-            return Response(dispatchers_list, status=status.HTTP_200_OK)
+        # return Response(dispatchers_list, status=status.HTTP_200_OK)
+        drivers_query = Driver.objects.all().order_by('first_name')
+        drivers_serializer = DriverSerializer(drivers_query, many=True)
+        return Response(drivers_serializer.data, status=status.HTTP_200_OK)
 
-        if request.method == 'POST':
-            driver_serializer = CreateDriverSerializer(data=request.data)
-            if driver_serializer.is_valid():
-                driver_serializer.save()
-                return Response({'success': 'driver has been succesfully added'}, status=status.HTTP_201_CREATED)
-            return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'POST':
+        driver_serializer = CreateDriverSerializer(data=request.data)
+        if driver_serializer.is_valid():
+            driver_serializer.save()
+            return Response({'success': 'driver has been succesfully added'}, status=status.HTTP_201_CREATED)
+        return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-    else:
-        return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
+    # else:
+    #     return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['GET', 'PATCH'])

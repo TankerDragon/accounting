@@ -180,7 +180,7 @@ const GrossForm = ({ drivers, closeForm, dispatchers }) => {
   };
 
   return (
-    <div className="gross-form">
+    <div className="form gross-form">
       <div className="row">
         <h1>Add new Gross</h1>
       </div>

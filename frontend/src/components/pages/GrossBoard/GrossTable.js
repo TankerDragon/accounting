@@ -14,7 +14,7 @@ const getName = (id, names) => {
   return "! name not found !";
 };
 
-const Table = ({ logs, drivers, dispatchers }) => {
+const GrossTable = ({ logs, drivers, dispatchers }) => {
   const navigate = useNavigate();
 
   return (
@@ -95,4 +95,4 @@ const Table = ({ logs, drivers, dispatchers }) => {
   );
 };
 
-export default Table;
+export default GrossTable;

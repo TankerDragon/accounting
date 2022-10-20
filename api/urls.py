@@ -19,7 +19,7 @@ urlpatterns = [
     path('budget/', views.main),
     path('drivers-board/<int:week_before>', views.drivers_board),
     path('dispatchers/', views.getDispatchers),
-    path('new-driver/', views.new_driver),
+    path('drivers/', views.drivers),
     path('new-dispatcher/', views.new_dispatcher),
     path('edit-driver/<int:id>', views.edit_driver),
     path('edit-dispatcher/<int:id>', views.edit_dispatcher),

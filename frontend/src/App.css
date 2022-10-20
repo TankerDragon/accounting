@@ -296,8 +296,8 @@ body {
 .table tbody tr:hover .actions {
   opacity: 1;
 }
-/* Gross form */
-.gross-form {
+/* forms */
+.form {
   background: var(--color-container);
   box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
   position: fixed;
@@ -306,7 +306,13 @@ body {
   transform: translate(-50%, -50%);
   z-index: 3;
   max-width: 1400px;
-  width: 1100px;
   padding: 20px;
   border-radius: 20px;
 }
+.gross-form {
+  width: 1100px;
+}
+.drivers-form {
+  width: 800px;
+}
+/*  */

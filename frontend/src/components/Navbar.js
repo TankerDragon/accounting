@@ -39,15 +39,9 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
-          <NavLink className="link" to={"/dispatchers"}>
+          <NavLink className="link" to={"/users"}>
             <FiUsers />
-            Dispatchers
-          </NavLink>
-        </li>
-        <li>
-          <NavLink className="link" to={"/updaters"}>
-            <FiUsers />
-            Updaters
+            Users
           </NavLink>
         </li>
         <li>
