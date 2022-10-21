@@ -7,8 +7,8 @@ DRIVER_TYPE = [
     ('O85', 'Owner operator - 85%'),
     ('C30', 'Company driver - 30%'),
     ('C35', 'Company driver - 35%'),
-    ('L**', 'Lease operator'),
-    ('R**', 'Rental operator')
+    ('L', 'Lease operator'),
+    ('R', 'Rental operator')
 ]
 
 BUDGET_TYPE = [

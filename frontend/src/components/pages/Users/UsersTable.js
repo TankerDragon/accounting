@@ -19,16 +19,14 @@ const getChoice = (choice, choices) => {
   return found;
 };
 
-const DRIVER_TYPE = {
-  O88: "Owner operator - 88%",
-  O85: "Owner operator - 85%",
-  C30: "Company driver - 30%",
-  C35: "Company driver - 35%",
-  L: "Lease operator",
-  R: "Rental operator",
+const USER_ROLES = {
+  OWN: "Owner",
+  ADM: "Admin",
+  DIS: "Dispatcher",
+  UPD: "Updater",
 };
 
-const DriversTable = ({ drivers }) => {
+const UsersTable = ({ users }) => {
   const navigate = useNavigate();
 
   return (
@@ -38,35 +36,33 @@ const DriversTable = ({ drivers }) => {
           <th>№</th>
           <th>First name</th>
           <th>Last name</th>
-          <th>Dispatcher</th>
-          <th>Driver type</th>
-          <th>Gross target</th>
+          <th>Username</th>
+          <th>User role</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {drivers.map((driver, index) => {
+        {users.map((user, index) => {
           return (
-            <tr key={driver.id}>
+            <tr key={user.id}>
               <td>{index + 1}</td>
-              <td>{driver.first_name}</td>
-              <td>{driver.last_name}</td>
-              <td>{driver.dispatcher}</td>
-              <td>{getChoice(driver.driver_type, DRIVER_TYPE)}</td>
-              <td>{driver.gross_target}</td>
+              <td>{user.first_name}</td>
+              <td>{user.last_name}</td>
+              <td>{user.username}</td>
+              <td>{getChoice(user.role, USER_ROLES)}</td>
               <td>
                 <div className="actions">
                   <div
                     className="icon-holder"
                     onClick={() => {
-                      navigate("/edit-driver/" + driver.id);
+                      navigate("/edit-driver/" + user.id);
                     }}
                   >
                     <BsPencil className="icon edit" />
                   </div>
-                  {driver.edited_link && (
+                  {user.edited_link && (
                     <div className="msg">
-                      <Link to={"/edit-archive/" + driver.id}>edited</Link>
+                      <Link to={"/edit-archive/" + user.id}>edited</Link>
                     </div>
                   )}
                 </div>
@@ -79,4 +75,4 @@ const DriversTable = ({ drivers }) => {
   );
 };
 
-export default DriversTable;
+export default UsersTable;

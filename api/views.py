@@ -9,7 +9,7 @@ from rest_framework import status
 from django.conf import settings
 from django.db.models import Q
 from core.serializers import UserSerializer, UserCreateSerializer
-from .serializers import DriverSerializer, DriverNameSerializer, DispatcherSerializer, DispatcherNameSerializer, LogSerializer, CreateDriverSerializer, CreateDispatcherSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
+from .serializers import DriverSerializer, DriverNameSerializer, DispatcherNameSerializer, LogSerializer, CreateDriverSerializer, CreateUserSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
 from core.models import User
 from .models import Driver, Log, LogEdit
 from decimal import Decimal
@@ -104,20 +104,24 @@ def main(request):
 @permission_classes([IsAuthenticated])
 def drivers(request):
     if request.method == 'GET':
-        # dispatchers = User.objects.filter(is_superuser = False).values('id', 'username')
-        # dispatchers_list = [{'id': dispatcher["id"], 'username': dispatcher["username"]} for dispatcher in dispatchers]
+        #preparing dispatcher names
+        dispatcher_names = User.objects.filter(role='DIS').values('id', 'first_name', 'last_name')
+        dispatcher_names_serializer = DispatcherNameSerializer(dispatcher_names, many=True)
 
-        # return Response(dispatchers_list, status=status.HTTP_200_OK)
         drivers_query = Driver.objects.all().order_by('first_name')
         drivers_serializer = DriverSerializer(drivers_query, many=True)
-        return Response(drivers_serializer.data, status=status.HTTP_200_OK)
+        return Response({"drivers": drivers_serializer.data, "dispatchers": drivers_serializer.data}, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
-        driver_serializer = CreateDriverSerializer(data=request.data)
-        if driver_serializer.is_valid():
-            driver_serializer.save()
-            return Response({'success': 'driver has been succesfully added'}, status=status.HTTP_201_CREATED)
-        return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # check if requested user has access
+        role = request.user.role
+        if role == "OWN" or role == "ADM": 
+            driver_serializer = CreateDriverSerializer(data=request.data)
+            if driver_serializer.is_valid():
+                driver_serializer.save()
+                return Response({'success': 'driver has been succesfully created'}, status=status.HTTP_201_CREATED)
+            return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'you have no access to create a driver'}, status=status.HTTP_403_FORBIDDEN)
         
     # else:
     #     return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
@@ -144,34 +148,25 @@ def edit_driver(request, id):
     return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def getDispatchers(request):
-    
-    if request.user.is_superuser:
-        if request.method == 'GET':
-            dispatchers = User.objects.filter(is_superuser = False)
-            dispatchers_serializer = DispatcherSerializer(dispatchers, many=True)            
-            return Response(dispatchers_serializer.data, status=status.HTTP_200_OK)
-        
-    else:
-        return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
+def users(request):
+    if request.method == 'GET':
+        users = User.objects.all()
+        user_serializer = UserSerializer(users, many=True)            
+        return Response(user_serializer.data, status=status.HTTP_200_OK)
 
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def new_dispatcher(request):
-    
-    if request.user.is_superuser:
-        if request.method == 'POST':
-            driver_serializer = CreateDispatcherSerializer(data=request.data)
-            if driver_serializer.is_valid():
-                driver_serializer.save()
-                return Response({'success': 'dispatcher has been succesfully added'}, status=status.HTTP_201_CREATED)
-            return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    else:
-        return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
+    if request.method == 'POST':
+        # check if requested user has access and check if requested user can created requested type of user
+        role = request.user.role
+        requested_role = request.data["role"]
+        if role == "OWN" or (role == "ADM" and (requested_role != "OWN" and requested_role != "ADM")):
+            user_serializer = CreateUserSerializer(data=request.data)
+            if user_serializer.is_valid():
+                user_serializer.save()
+                return Response({'success': 'user has been succesfully cerated'}, status=status.HTTP_201_CREATED)
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'you have no access to create user'}, status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['GET', 'PATCH'])
@@ -197,7 +192,7 @@ def edit_dispatcher(request, id):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-def archive(request):
+def gross(request):
     if request.method == 'GET':
         #preparing driver names
         driver_names = Driver.objects.all().values('id', 'first_name', 'last_name')

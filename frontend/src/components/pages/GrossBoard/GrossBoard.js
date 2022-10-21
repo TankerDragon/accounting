@@ -40,7 +40,7 @@ const GrossBoard = () => {
   return (
     <div className="page-container">
       <div className="row">
-        <h1>Driver archive</h1>
+        <h1>Gross board</h1>
         <button className="button" onClick={() => setFormOpen(!formOpen)}>
           New Gross
         </button>

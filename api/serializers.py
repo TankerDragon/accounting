@@ -13,7 +13,7 @@ class LogDecimalFielsSerializer(Serializer):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'password']
+        fields = ['first_name', 'last_name', 'username', 'role']
 
 class DriverSerializer(ModelSerializer):
     # user_id = serializers.IntegerField(read_only=True)
@@ -32,11 +32,6 @@ class DriverNameSerializer(ModelSerializer):
         model = Driver
         fields = ['id', 'first_name', 'last_name']
     
-
-class DispatcherSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'date_joined']
 
 class DispatcherNameSerializer(ModelSerializer):
     class Meta:
@@ -82,10 +77,10 @@ class CreateDriverSerializer(ModelSerializer):
         model = Driver
         fields = ['first_name', 'last_name', 'driver_type', 'dispatcher', 'gross_target']
 
-class CreateDispatcherSerializer(ModelSerializer):
+class CreateUserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'password']
+        fields = ['username', 'first_name', 'last_name', 'role', 'password']
 
     def validate_password(self, value: str) -> str:
         """    Hash value passed by user.    :param value: password of a user    :return: a hashed version of the password    """    

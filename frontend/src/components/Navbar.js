@@ -45,15 +45,9 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
-          <NavLink className="link" to={"/new-user"}>
-            <FiUserPlus />
-            Add User
-          </NavLink>
-        </li>
-        <li>
           <NavLink className="link" to={"/archive"}>
             <BsArchive />
-            Archive
+            Actions
           </NavLink>
         </li>
         <li>

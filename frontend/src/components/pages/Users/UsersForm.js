@@ -3,20 +3,16 @@ import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
-import Checkbox from "../../common/Checkbox";
 
-const DRIVER_TYPE = {
-  O88: "Owner operator - 88%",
-  O85: "Owner operator - 85%",
-  C30: "Company driver - 30%",
-  C35: "Company driver - 35%",
-  L: "Lease operator",
-  R: "Rental operator",
+const USER_ROLES = {
+  ADM: "Admin",
+  DIS: "Dispatcher",
+  UPD: "Updater",
 };
 
-const DRIVERS_URL = "/api/drivers/";
+const USERS_URL = "/api/users/";
 
-const DriversForm = ({ closeForm, dispatchers }) => {
+const UsersForm = ({ closeForm }) => {
   const { auth } = useAuth();
 
   const [errors, setErrors] = useState({});
@@ -26,17 +22,10 @@ const DriversForm = ({ closeForm, dispatchers }) => {
   const [log, setLog] = useState({
     first_name: "",
     last_name: "",
-    dispatcher: "",
-    driver_type: "L",
-    gross_target: "",
+    role: "DIS",
+    username: "",
+    password: "",
   });
-
-  // preparing dispatchers selections for the form
-  const DISPATCHERS = [];
-  DISPATCHERS.push(["", "--------"]);
-  for (let dispatcher of dispatchers) {
-    DISPATCHERS.push([dispatcher.id, dispatcher.first_name + " " + dispatcher.last_name]);
-  }
 
   const handleChange = ({ currentTarget: input }) => {
     const newLog = { ...log };
@@ -61,7 +50,7 @@ const DriversForm = ({ closeForm, dispatchers }) => {
 
     // post to server
     try {
-      const response = await axios.post(DRIVERS_URL, JSON.stringify(log), {
+      const response = await axios.post(USERS_URL, JSON.stringify(log), {
         headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
         // withCredentials: true,
       });
@@ -92,7 +81,7 @@ const DriversForm = ({ closeForm, dispatchers }) => {
   return (
     <div className="form drivers-form">
       <div className="row">
-        <h1>Add new driver</h1>
+        <h1>Add new user</h1>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -100,11 +89,11 @@ const DriversForm = ({ closeForm, dispatchers }) => {
           <Input name="last_name" type="text" value={log.last_name} label="Last name" onChange={handleChange} error={errors.last_name} />
         </div>
         <div className="row">
-          <Select name="dispatcher" selections={DISPATCHERS} isObject={false} value={log.dispatcher} label="Dispatcher" onChange={handleChange} error={errors.dispatcher} />
-          <Select name="driver_type" selections={DRIVER_TYPE} isObject={true} value={log.driver_type} label="Driver type" onChange={handleChange} error={errors.driver_type} />
+          <Input name="username" type="text" value={log.username} label="Username" onChange={handleChange} error={errors.username} />
+          <Select name="role" selections={USER_ROLES} isObject={true} value={log.role} label="User role" onChange={handleChange} error={errors.role} />
         </div>
         <div className="row">
-          <Input name="gross_target" type="number" value={log.gross_target} label="Gross Target" onChange={handleChange} error={errors.gross_target} />
+          <Input name="password" type="password" value={log.password} label="Password" onChange={handleChange} error={errors.password} />
         </div>
 
         <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
@@ -121,4 +110,4 @@ const DriversForm = ({ closeForm, dispatchers }) => {
   );
 };
 
-export default DriversForm;
+export default UsersForm;

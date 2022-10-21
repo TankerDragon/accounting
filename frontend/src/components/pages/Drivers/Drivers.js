@@ -10,6 +10,7 @@ const Drivers = () => {
   const { auth } = useAuth();
 
   const [drivers, setDrivers] = useState([]);
+  const [dispatchers, setDispatchers] = useState([]);
 
   const [formOpen, setFormOpen] = useState(false);
 
@@ -30,7 +31,8 @@ const Drivers = () => {
       // withCredentials: true,
     });
     console.log("***data", response);
-    setDrivers(response.data);
+    setDrivers(response.data.drivers);
+    setDispatchers(response.data.dispatchers);
   };
 
   return (
@@ -44,7 +46,7 @@ const Drivers = () => {
       <div style={{ overflow: "auto", height: "80vh" }}>
         <DriversTable drivers={drivers} />
       </div>
-      {formOpen && <DriversForm closeForm={closeForm} />}
+      {formOpen && <DriversForm closeForm={closeForm} dispatchers={dispatchers} />}
     </div>
   );
 };
