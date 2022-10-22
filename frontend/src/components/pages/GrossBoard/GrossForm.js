@@ -5,7 +5,7 @@ import Input from "../../common/Input";
 import Select from "../../common/Select";
 import Checkbox from "../../common/Checkbox";
 
-const GROSS_URL = "/api/budget/";
+const GROSS_URL = "/api/gross/";
 
 const BUDGET_TYPE = {
   D: "Driver's budget",
