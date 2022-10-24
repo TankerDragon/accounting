@@ -10,8 +10,10 @@ const Users = () => {
   const { auth } = useAuth();
 
   const [users, setUsers] = useState([]);
+  const [edit, setEdit] = useState({});
 
   const [formOpen, setFormOpen] = useState(false);
+  const [method, setMethod] = useState("POST");
 
   useEffect(() => {
     getUsers();
@@ -22,6 +24,12 @@ const Users = () => {
     if (reload) {
       getUsers();
     }
+  };
+
+  const handleEdit = (handle) => {
+    setEdit(handle);
+    setMethod("PUT");
+    setFormOpen(true);
   };
 
   const getUsers = async () => {
@@ -37,14 +45,20 @@ const Users = () => {
     <div className="page-container">
       <div className="row">
         <h1>Users</h1>
-        <button className="button" onClick={() => setFormOpen(!formOpen)}>
+        <button
+          className="button"
+          onClick={() => {
+            setMethod("POST");
+            setFormOpen(!formOpen);
+          }}
+        >
           New User
         </button>
       </div>
       <div style={{ overflow: "auto", height: "80vh" }}>
-        <UsersTable users={users} />
+        <UsersTable users={users} handleEdit={handleEdit} />
       </div>
-      {formOpen && <UsersForm closeForm={closeForm} />}
+      {formOpen && <UsersForm closeForm={closeForm} method={method} edit={edit} />}
     </div>
   );
 };

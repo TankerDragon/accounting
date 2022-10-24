@@ -27,7 +27,7 @@ const Drivers = () => {
     }
   };
 
-  const handelEdit = (driver) => {
+  const handleEdit = (driver) => {
     setEdit(driver);
     setMethod("PUT");
     setFormOpen(true);
@@ -58,7 +58,7 @@ const Drivers = () => {
         </button>
       </div>
       <div style={{ overflow: "auto", height: "80vh" }}>
-        <DriversTable drivers={drivers} dispatchers={dispatchers} handelEdit={handelEdit} />
+        <DriversTable drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
       </div>
       {formOpen && <DriversForm closeForm={closeForm} dispatchers={dispatchers} method={method} edit={edit} />}
     </div>

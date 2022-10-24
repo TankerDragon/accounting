@@ -99,7 +99,7 @@ def drivers(request):
         return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def users(request):
     if request.method == 'GET':
@@ -108,7 +108,7 @@ def users(request):
         return Response(user_serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
-        # check if requested user has access and check if requested user can created requested type of user
+        # check if requested user has access and check if requested user can create requested type of user
         role = request.user.role
         requested_role = request.data["role"]
         if role == "OWN" or (role == "ADM" and (requested_role != "OWN" and requested_role != "ADM")):
@@ -118,6 +118,19 @@ def users(request):
                 return Response({'success': 'user has been succesfully cerated'}, status=status.HTTP_201_CREATED)
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to create user'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'PUT':
+        # check if requested user has access and check if requested user can update requested type of user
+        role = request.user.role
+        requested_role = request.data["role"]
+        if role == "OWN" or (role == "ADM" and (requested_role != "OWN" and requested_role != "ADM")):
+            user = User.objects.get(pk=request.data["id"])
+            user_serializer = UserSerializer(instance=user, data=request.data)
+            if user_serializer.is_valid():
+                user_serializer.save()
+                return Response({'success': 'user has been succesfully updated'}, status=status.HTTP_200_OK)
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'you have no access to update this user'}, status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['GET', 'PATCH'])
@@ -130,18 +143,12 @@ def edit_dispatcher(request, id):
             dispatcher_serializer = UpdateDispatcherSerializer(dispatcher)
             return Response(dispatcher_serializer.data, status=status.HTTP_200_OK)
 
-        if request.method == 'PATCH':
-            dispatcher = User.objects.get(pk=id)
-            dispatcher_serializer = UpdateDispatcherSerializer(instance=dispatcher, data=request.data)
-            if dispatcher_serializer.is_valid():
-                dispatcher_serializer.save()
-                return Response({'success': 'dispatcher has been succesfully updated'}, status=status.HTTP_200_OK)
-            return Response(dispatcher_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
     
     return Response({'detail': 'you have no access to use this page'}, status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 @permission_classes([AllowAny])
 def gross(request):
     if request.method == 'GET':
@@ -166,13 +173,13 @@ def gross(request):
             # adding data
             data['change'] = check_decimal_places.validated_data['original_rate'] - check_decimal_places.validated_data['current_rate']
             data['user'] = request.user.id
-            data['date'] = datetime.date.today()
-            data['time'] = datetime.datetime.now().strftime("%H:%M:%S")
+            # data['date'] = datetime.date.today()
+            # data['time'] = datetime.datetime.now().strftime("%H:%M:%S")
             # check if data is valid
             log_serializer = LogSerializer(data=data)
             if log_serializer.is_valid():
                 # check if pcs_number is not used before
-                numOfPCSNumbers = Log.objects.filter(pcs_number=data['pcs_number'], is_edited=False).count()
+                numOfPCSNumbers = Log.objects.filter(pcs_number=data['pcs_number']).count()
                 if numOfPCSNumbers == 0:
                     driver = Driver.objects.get(pk=data['driver'])
                     # check if user is superuser or user is driver's dispatcher
@@ -190,6 +197,54 @@ def gross(request):
                 return Response({'pcs_number': ['this PCS number is used before']}, status=status.HTTP_400_BAD_REQUEST)
             return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(check_decimal_places.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'PUT':
+        data = request.data
+        budget_type = request.data['budget_type']
+        check_decimal_places = LogDecimalFielsSerializer(data=data)
+        if check_decimal_places.is_valid():
+            # adding data
+            data['change'] = check_decimal_places.validated_data['original_rate'] - check_decimal_places.validated_data['current_rate']
+            # check if data is valid
+            log = Log.objects.get(pk=data["id"])
+            log_serializer = LogSerializer(instance=log, data=data)
+            if log_serializer.is_valid():
+                # check if pcs_number is not used before
+                numOfPCSNumbers = Log.objects.filter(pcs_number=data['pcs_number']).count()
+                if numOfPCSNumbers == 0 or log.pcs_number == data['pcs_number']:
+                    driver = Driver.objects.get(pk=data['driver'])
+                    # check if user is superuser or user is driver's dispatcher
+                    if request.user.is_superuser or driver.dispatcher == request.user:
+                        new_log = log_serializer.save()
+                        if budget_type == 'D':
+                            driver.d_budget += data['change']
+                        elif budget_type == 'L':
+                            driver.l_budget += data['change']
+                        elif budget_type == 'R':
+                            driver.r_budget += data['change']
+                        # driver.save()
+                        #updating old log
+                        log.is_edited = True
+                        log.save()
+                        #getting back changed budget from driver
+                        if log.budget_type == 'D':
+                            driver.d_budget -= log.change
+                        elif log.budget_type == 'L':
+                            driver.l_budget -= log.change
+                        elif log.budget_type == 'R':
+                            driver.r_budget -= log.change
+                        elif log.budget_type == 'S':
+                            driver.s_budget -= log.change
+                        driver.save()
+                        #saving log edition
+                        log_edit = LogEdit.objects.create(original_log = log, edited_log = new_log)
+                        log_edit.save()
+                        return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response({'pcs_number': ['this PCS number is used before']}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(check_decimal_places.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -227,54 +282,7 @@ def edit_log(request, id):
         log_serializer = LogSerializer(log)
         return Response(log_serializer.data, status=status.HTTP_200_OK)
 
-    if request.method == 'PATCH':
-        data = request.data
-        budget_type = request.data['budget_type']
-        check_decimal_places = LogDecimalFielsSerializer(data=data)
-        if check_decimal_places.is_valid():
-            # adding data
-            data['change'] = check_decimal_places.validated_data['original_rate'] - check_decimal_places.validated_data['current_rate']
-            data['user'] = request.user.id
-            data['date'] = log.date
-            # check if data is valid
-            log_serializer = LogSerializer(data=data)
-            if log_serializer.is_valid():
-                # check if pcs_number is not used before
-                numOfPCSNumbers = Log.objects.filter(pcs_number=data['pcs_number'], is_edited=False).count()
-                if numOfPCSNumbers == 0 or log.pcs_number == data['pcs_number']:
-                    driver = Driver.objects.get(pk=data['driver'])
-                    # check if user is superuser or user is driver's dispatcher
-                    if request.user.is_superuser or driver.dispatcher == request.user:
-                        new_log = log_serializer.save()
-                        if budget_type == 'D':
-                            driver.d_budget += data['change']
-                        elif budget_type == 'L':
-                            driver.l_budget += data['change']
-                        elif budget_type == 'R':
-                            driver.r_budget += data['change']
-                        # driver.save()
-                        #updating old log
-                        log.is_edited = True
-                        log.save()
-                        #getting back changed budget from driver
-                        if log.budget_type == 'D':
-                            driver.d_budget -= log.change
-                        elif log.budget_type == 'L':
-                            driver.l_budget -= log.change
-                        elif log.budget_type == 'R':
-                            driver.r_budget -= log.change
-                        elif log.budget_type == 'S':
-                            driver.s_budget -= log.change
-                        driver.save()
-                        #saving log edition
-                        log_edit = LogEdit.objects.create(original_log = log, edited_log = new_log)
-                        log_edit.save()
-                        return Response(status=status.HTTP_200_OK)
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
-                return Response({'pcs_number': ['this PCS number is used before']}, status=status.HTTP_400_BAD_REQUEST)
-            return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(check_decimal_places.errors, status=status.HTTP_400_BAD_REQUEST)
-
+   
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -313,7 +321,7 @@ def drivers_board(request, week_before):
 
     dispatchers = User.objects.filter(is_superuser=False).values("username")
     dispatchers_list = [dispatcher["username"] for dispatcher in dispatchers]
-    logs = Log.objects.filter(date__gte = week_start, date__lte = week_end, is_edited=False)
+    logs = Log.objects.filter(date__gte = week_start, date__lte = week_end)
 
     if request.user.is_superuser:
         drivers = Driver.objects.all().values("id", "first_name", "last_name", "dispatcher", "gross_target")

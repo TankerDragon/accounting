@@ -12,20 +12,24 @@ const USER_ROLES = {
 
 const USERS_URL = "/api/users/";
 
-const UsersForm = ({ closeForm }) => {
+const UsersForm = ({ closeForm, method, edit }) => {
   const { auth } = useAuth();
 
   const [errors, setErrors] = useState({});
 
   const [errMsg, setErrMsg] = useState("");
 
-  const [log, setLog] = useState({
-    first_name: "",
-    last_name: "",
-    role: "DIS",
-    username: "",
-    password: "",
-  });
+  const [log, setLog] = useState(
+    method === "PUT"
+      ? edit
+      : {
+          first_name: "",
+          last_name: "",
+          role: "DIS",
+          username: "",
+          password: "",
+        }
+  );
 
   const handleChange = ({ currentTarget: input }) => {
     const newLog = { ...log };
@@ -44,18 +48,26 @@ const UsersForm = ({ closeForm }) => {
     // setErrors(errors === null ? {} : errors);
     // console.log(errors);
     // if (errors) return;
-    console.log("submitted");
+    console.log("submitted", method);
     setErrMsg("");
     setErrors({});
 
     // post to server
     try {
-      const response = await axios.post(USERS_URL, JSON.stringify(log), {
-        headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-        // withCredentials: true,
-      });
+      let response;
+      if (method === "POST") {
+        response = await axios.post(USERS_URL, JSON.stringify(log), {
+          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          // withCredentials: true,
+        });
+      } else if (method === "PUT") {
+        response = await axios.put(USERS_URL, JSON.stringify(log), {
+          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          // withCredentials: true,
+        });
+      }
       console.log(response);
-      if (response.status === 201) closeForm({ reload: true });
+      if (response.status === 201 || response.status === 200) closeForm({ reload: true });
     } catch (err) {
       console.log(err);
       if (!err?.response) {
@@ -92,9 +104,7 @@ const UsersForm = ({ closeForm }) => {
           <Input name="username" type="text" value={log.username} label="Username" onChange={handleChange} error={errors.username} />
           <Select name="role" selections={USER_ROLES} isObject={true} value={log.role} label="User role" onChange={handleChange} error={errors.role} />
         </div>
-        <div className="row">
-          <Input name="password" type="password" value={log.password} label="Password" onChange={handleChange} error={errors.password} />
-        </div>
+        <div className="row">{method === "POST" && <Input name="password" type="password" value={log.password} label="Password" onChange={handleChange} error={errors.password} />}</div>
 
         <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
           {errMsg}

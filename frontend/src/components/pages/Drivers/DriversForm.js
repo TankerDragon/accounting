@@ -3,7 +3,6 @@ import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
-import Checkbox from "../../common/Checkbox";
 
 const DRIVER_TYPE = {
   O88: "Owner operator - 88%",

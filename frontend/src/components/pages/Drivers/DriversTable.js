@@ -1,4 +1,3 @@
-import { Link, useNavigate } from "react-router-dom";
 // import icons
 import { BsPencil } from "react-icons/bs";
 
@@ -28,9 +27,7 @@ const DRIVER_TYPE = {
   R: "Rental operator",
 };
 
-const DriversTable = ({ drivers, dispatchers, handelEdit }) => {
-  const navigate = useNavigate();
-
+const DriversTable = ({ drivers, dispatchers, handleEdit }) => {
   return (
     <table className="table">
       <thead>
@@ -59,16 +56,11 @@ const DriversTable = ({ drivers, dispatchers, handelEdit }) => {
                   <div
                     className="icon-holder"
                     onClick={() => {
-                      handelEdit(driver);
+                      handleEdit(driver);
                     }}
                   >
                     <BsPencil className="icon edit" />
                   </div>
-                  {driver.edited_link && (
-                    <div className="msg">
-                      <Link to={"/edit-archive/" + driver.id}>edited</Link>
-                    </div>
-                  )}
                 </div>
               </td>
             </tr>

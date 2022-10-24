@@ -1,10 +1,10 @@
 import logo from "../images/logo.png";
 import { NavLink } from "react-router-dom";
 // importing icons
-import { FiUserPlus, FiLogOut, FiUsers } from "react-icons/fi";
+import { FiLogOut, FiUsers } from "react-icons/fi";
 import { RiExchangeDollarLine, RiLineChartLine, RiAdminLine } from "react-icons/ri";
 import { HiOutlineKey } from "react-icons/hi";
-import { BsArchive } from "react-icons/bs";
+import { BsArchive, BsCalculator } from "react-icons/bs";
 
 function Navbar() {
   return (
@@ -18,6 +18,12 @@ function Navbar() {
           <NavLink className="link" to={"/gross-board"}>
             <RiExchangeDollarLine />
             Gross board
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className="link" to={"/accounting"}>
+            <BsCalculator />
+            Accounting
           </NavLink>
         </li>
         <li>

@@ -1,4 +1,3 @@
-import { Link, useNavigate } from "react-router-dom";
 // import icons
 import { BsPencil } from "react-icons/bs";
 
@@ -26,9 +25,7 @@ const USER_ROLES = {
   UPD: "Updater",
 };
 
-const UsersTable = ({ users }) => {
-  const navigate = useNavigate();
-
+const UsersTable = ({ users, handleEdit }) => {
   return (
     <table className="table">
       <thead>
@@ -55,16 +52,11 @@ const UsersTable = ({ users }) => {
                   <div
                     className="icon-holder"
                     onClick={() => {
-                      navigate("/edit-driver/" + user.id);
+                      handleEdit(user);
                     }}
                   >
                     <BsPencil className="icon edit" />
                   </div>
-                  {user.edited_link && (
-                    <div className="msg">
-                      <Link to={"/edit-archive/" + user.id}>edited</Link>
-                    </div>
-                  )}
                 </div>
               </td>
             </tr>
