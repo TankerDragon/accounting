@@ -92,7 +92,7 @@ class Driver(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     driver_type = models.CharField(max_length=3, choices=DRIVER_TYPE)
-    gross_target = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True, default=10000.00)
+    gross_target = models.DecimalField(max_digits=9, decimal_places=2, default=10000.00)
     is_active = models.BooleanField(default=1)
 
     def __str__(self):

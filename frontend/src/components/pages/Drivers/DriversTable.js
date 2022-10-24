@@ -28,7 +28,7 @@ const DRIVER_TYPE = {
   R: "Rental operator",
 };
 
-const DriversTable = ({ drivers }) => {
+const DriversTable = ({ drivers, dispatchers, handelEdit }) => {
   const navigate = useNavigate();
 
   return (
@@ -51,7 +51,7 @@ const DriversTable = ({ drivers }) => {
               <td>{index + 1}</td>
               <td>{driver.first_name}</td>
               <td>{driver.last_name}</td>
-              <td>{driver.dispatcher}</td>
+              <td>{getName(driver.dispatcher, dispatchers)}</td>
               <td>{getChoice(driver.driver_type, DRIVER_TYPE)}</td>
               <td>{driver.gross_target}</td>
               <td>
@@ -59,7 +59,7 @@ const DriversTable = ({ drivers }) => {
                   <div
                     className="icon-holder"
                     onClick={() => {
-                      navigate("/edit-driver/" + driver.id);
+                      handelEdit(driver);
                     }}
                   >
                     <BsPencil className="icon edit" />

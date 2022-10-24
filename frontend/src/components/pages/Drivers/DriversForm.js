@@ -16,20 +16,24 @@ const DRIVER_TYPE = {
 
 const DRIVERS_URL = "/api/drivers/";
 
-const DriversForm = ({ closeForm, dispatchers }) => {
+const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
   const { auth } = useAuth();
 
   const [errors, setErrors] = useState({});
 
   const [errMsg, setErrMsg] = useState("");
 
-  const [log, setLog] = useState({
-    first_name: "",
-    last_name: "",
-    dispatcher: "",
-    driver_type: "L",
-    gross_target: "",
-  });
+  const [log, setLog] = useState(
+    method === "PUT"
+      ? edit
+      : {
+          first_name: "",
+          last_name: "",
+          dispatcher: "",
+          driver_type: "L",
+          gross_target: "",
+        }
+  );
 
   // preparing dispatchers selections for the form
   const DISPATCHERS = [];
@@ -55,18 +59,27 @@ const DriversForm = ({ closeForm, dispatchers }) => {
     // setErrors(errors === null ? {} : errors);
     // console.log(errors);
     // if (errors) return;
-    console.log("submitted");
+    console.log("submitted", method);
     setErrMsg("");
     setErrors({});
 
-    // post to server
+    // post or put to server
     try {
-      const response = await axios.post(DRIVERS_URL, JSON.stringify(log), {
-        headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-        // withCredentials: true,
-      });
+      let response;
+      if (method === "POST") {
+        response = await axios.post(DRIVERS_URL, JSON.stringify(log), {
+          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          // withCredentials: true,
+        });
+      } else if (method === "PUT") {
+        response = await axios.put(DRIVERS_URL, JSON.stringify(log), {
+          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          // withCredentials: true,
+        });
+      }
+
       console.log(response);
-      if (response.status === 201) closeForm({ reload: true });
+      if (response.status === 201 || response.status === 200) closeForm({ reload: true });
     } catch (err) {
       console.log(err);
       if (!err?.response) {

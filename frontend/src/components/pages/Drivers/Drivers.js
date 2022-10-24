@@ -10,9 +10,11 @@ const Drivers = () => {
   const { auth } = useAuth();
 
   const [drivers, setDrivers] = useState([]);
+  const [edit, setEdit] = useState({});
   const [dispatchers, setDispatchers] = useState([]);
 
   const [formOpen, setFormOpen] = useState(false);
+  const [method, setMethod] = useState("POST");
 
   useEffect(() => {
     getDrivers();
@@ -23,6 +25,12 @@ const Drivers = () => {
     if (reload) {
       getDrivers();
     }
+  };
+
+  const handelEdit = (driver) => {
+    setEdit(driver);
+    setMethod("PUT");
+    setFormOpen(true);
   };
 
   const getDrivers = async () => {
@@ -39,14 +47,20 @@ const Drivers = () => {
     <div className="page-container">
       <div className="row">
         <h1>Drivers</h1>
-        <button className="button" onClick={() => setFormOpen(!formOpen)}>
+        <button
+          className="button"
+          onClick={() => {
+            setMethod("POST");
+            setFormOpen(!formOpen);
+          }}
+        >
           New Driver
         </button>
       </div>
       <div style={{ overflow: "auto", height: "80vh" }}>
-        <DriversTable drivers={drivers} />
+        <DriversTable drivers={drivers} dispatchers={dispatchers} handelEdit={handelEdit} />
       </div>
-      {formOpen && <DriversForm closeForm={closeForm} dispatchers={dispatchers} />}
+      {formOpen && <DriversForm closeForm={closeForm} dispatchers={dispatchers} method={method} edit={edit} />}
     </div>
   );
 };

@@ -20,7 +20,6 @@ urlpatterns = [
     path('drivers/', views.drivers),
     path('users/', views.users),
     path('drivers-board/<int:week_before>', views.drivers_board),
-    path('edit-driver/<int:id>', views.edit_driver),
     path('edit-dispatcher/<int:id>', views.edit_dispatcher),
     # path('archive/<int:id>', views.driver_archive),
     path('edit-log/<int:id>', views.edit_log),
