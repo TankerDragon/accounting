@@ -41,30 +41,30 @@ class DispatcherNameSerializer(ModelSerializer):
 class LogSerializer (ModelSerializer):
     class Meta:
         model = Log
-        fields = [
-            'id', 
-            'user', 
-            'driver', 
-            'dispatcher', 
-            'budget_type', 
-            'autobooker', 
-            'current_rate', 
-            'original_rate',
-            'change', 
-            'total_miles', 
-            'date',
-            'time',
-            'pcs_number', 
-            'bol_number',
-            'trailer',
-            'truck',
-            'status', 
-            'origin',
-            'origin_state',
-            'destination',
-            'destination_state',
-            'note',
-            ]
+        fields = '__all__'
+        read_only_fields = ['change', 'time', 'is_edited']
+
+    def validate_pcs_number(self, value):
+        numOfPCSNumbers = Log.objects.filter(pcs_number=value).count()
+        if numOfPCSNumbers != 0:
+            raise serializers.ValidationError(['This number is used before'])
+        return value
+
+    def create(self, validated_data):
+        log = Log(**validated_data)
+        log.change =  log.original_rate - log.current_rate
+        log.save()
+        # updating driver's budget
+        if log.budget_type == 'D':
+            log.driver.d_budget += log.change
+        elif log.budget_type == 'L':
+            log.driver.l_budget += log.change
+        elif log.budget_type == 'R':
+            log.driver.r_budget += log.change
+        log.driver.save()
+        return log
+
+
 
 
 # class EditLogSerializer (ModelSerializer):

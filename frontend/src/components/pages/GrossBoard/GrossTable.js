@@ -51,9 +51,7 @@ const GrossTable = ({ logs, drivers, dispatchers }) => {
               <td>{log.user}</td>
               <td>{log.pcs_number}</td>
               <td>{log.bol_number}</td>
-              <td>
-                {log.date} & {log.time}
-              </td>
+              <td>{log.time}</td>
               <td>{getName(log.dispatcher, dispatchers)}</td>
               <td>{log.truck}</td>
               <td>{log.trailer}</td>

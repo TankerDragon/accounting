@@ -121,8 +121,7 @@ class Log(models.Model):
     origin_state = models.CharField(max_length=2, choices=STATES)
     destination = models.CharField(max_length=128)
     destination_state = models.CharField(max_length=2, choices=STATES)
-    date = models.DateField(auto_now=True)
-    time = models.TimeField(auto_now=True)
+    time = models.DateTimeField(auto_now=True)
     note = models.CharField(max_length=100, null=True, blank=True)
     is_edited = models.BooleanField(default=False)
 
