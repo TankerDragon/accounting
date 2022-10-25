@@ -58,9 +58,15 @@ const GrossTable = ({ logs, drivers, dispatchers }) => {
               <td>{getName(log.driver, drivers)}</td>
               <td>{log.original_rate}</td>
               <td>{log.current_rate}</td>
-              <td>{log.change}</td>
+              <td className={log.change > 0 ? "good" : log.change < 0 ? "bad" : ""}>{log.change}</td>
               <td>{log.total_miles}</td>
-              <td>{log.status === "CO" ? "Covered" : log.status === "SO" ? "Sold" : log.status === "TO" ? "Tonu" : log.status === "RJ" ? "Rejected" : log.status === "RM" ? "Removed" : "***error"}</td>
+              <td
+                className={
+                  log.status === "CO" ? "covered" : log.status === "SO" ? "sold" : log.status === "TO" ? "tonu" : log.status === "RJ" ? "rejected" : log.status === "RM" ? "removed" : "rejected"
+                }
+              >
+                {log.status === "CO" ? "Covered" : log.status === "SO" ? "Sold" : log.status === "TO" ? "Tonu" : log.status === "RJ" ? "Rejected" : log.status === "RM" ? "Removed" : "***error"}
+              </td>
               <td>{log.budget_type === "D" ? "Driver's" : log.budget_type === "L" ? "Lane" : log.budget_type === "R" ? "Recovery" : log.budget_type === "S" ? "Dirilis" : "***error"}</td>
               <td>{log.autobooker ? "yes" : ""}</td>
               <td>{log.origin}</td>

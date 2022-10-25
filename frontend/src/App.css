@@ -128,18 +128,6 @@ body {
   transform: translateY(-5px);
 }
 /*  */
-.errmsg {
-  color: red;
-  margin-top: 20px;
-}
-.err-input {
-  color: red;
-  margin-top: 5px;
-}
-.offscreen {
-  display: none;
-}
-/*  */
 .link {
   padding: 10px 15px;
   font-weight: bold;

@@ -40,3 +40,41 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(175, 116, 33);
 }
+
+/*  */
+.errmsg {
+  color: rgb(255, 69, 69);
+  margin-top: 20px;
+}
+.err-input {
+  color: rgb(255, 69, 69);
+  margin-top: 5px;
+}
+.offscreen {
+  display: none;
+}
+/*  */
+.good {
+  color: rgb(35, 138, 35);
+  font-weight: bold;
+}
+.bad {
+  color: rgb(255, 69, 69);
+  font-weight: bold;
+}
+/*  */
+.covered {
+  background: rgba(54, 149, 54, 0.5);
+}
+.sold {
+  background: rgba(60, 87, 184, 0.5);
+}
+.removed {
+  background: rgba(222, 135, 54, 0.5);
+}
+.tonu {
+  background: rgba(196, 61, 61, 0.5);
+}
+.rejected {
+  background: rgba(209, 28, 28, 0.5);
+}
