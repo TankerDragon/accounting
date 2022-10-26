@@ -45,6 +45,10 @@ class LogSerializer (ModelSerializer):
         read_only_fields = ['change', 'time', 'is_edited']
 
     def validate_pcs_number(self, value):
+        # check when requested to update and pcs number is not changed
+        if self.instance and self.instance.pcs_number == value:
+            return value
+        # othervise
         numOfPCSNumbers = Log.objects.filter(pcs_number=value).count()
         if numOfPCSNumbers != 0:
             raise serializers.ValidationError(['This number is used before'])
@@ -63,6 +67,38 @@ class LogSerializer (ModelSerializer):
             log.driver.r_budget += log.change
         log.driver.save()
         return log
+
+    def update(self, instance: Log, validated_data):
+        # updating driver's budget
+        old_change = instance.change
+        old_type = instance.budget_type
+        old_driver = Driver.objects.get(pk=instance.driver.id)
+        budget_type = validated_data.get('budget_type')
+        change = validated_data.get('original_rate') - validated_data.get('current_rate')
+        driver = Driver.objects.get(pk=validated_data['driver'].id)
+        # remove old change from old driver
+        if old_type == 'D':
+            old_driver.d_budget -= old_change
+        elif old_type == 'L':
+            old_driver.l_budget -= old_change
+        elif old_type == 'R':
+            old_driver.r_budget -= old_change
+        old_driver.save()
+        # add new change to requested driver
+        if budget_type == 'D':
+            driver.d_budget += change
+        elif budget_type == 'L':
+            driver.l_budget += change
+        elif budget_type == 'R':
+            driver.r_budget += change
+        driver.save()
+        # mark the log as edited
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.change = change
+        instance.is_edited = True
+        instance.save()
+        return instance
 
 
 

@@ -79,7 +79,7 @@ const STATES = {
   WY: "Wyoming",
 };
 
-const GrossForm = ({ drivers, closeForm, dispatchers }) => {
+const GrossForm = ({ drivers, closeForm, dispatchers, method, edit }) => {
   const { auth } = useAuth();
 
   const [errors, setErrors] = useState({});
@@ -99,25 +99,30 @@ const GrossForm = ({ drivers, closeForm, dispatchers }) => {
     DISPATCHERS.push([dispatcher.id, dispatcher.first_name + " " + dispatcher.last_name]);
   }
 
-  const [log, setLog] = useState({
-    driver: "",
-    dispatcher: "",
-    original_rate: "",
-    current_rate: "",
-    budget_type: "D",
-    autobooker: false,
-    total_miles: "",
-    bol_number: "",
-    pcs_number: "",
-    trailer: "",
-    truck: "",
-    status: "CO",
-    origin: "",
-    origin_state: "OH",
-    destination: "",
-    destination_state: "OH",
-    note: "",
-  });
+  const [log, setLog] = useState(
+    method === "PUT"
+      ? edit
+      : {
+          driver: "",
+          dispatcher: "",
+          original_rate: "",
+          current_rate: "",
+          budget_type: "D",
+          autobooker: false,
+          total_miles: "",
+          bol_number: "",
+          carrier: "",
+          pcs_number: "",
+          trailer: "",
+          truck: "",
+          status: "CO",
+          origin: "",
+          origin_state: "OH",
+          destination: "",
+          destination_state: "OH",
+          note: "",
+        }
+  );
 
   const handleChange = ({ currentTarget: input }) => {
     const newLog = { ...log };
@@ -151,10 +156,18 @@ const GrossForm = ({ drivers, closeForm, dispatchers }) => {
 
     // post to server
     try {
-      const response = await axios.post(GROSS_URL, JSON.stringify(log), {
-        headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-        // withCredentials: true,
-      });
+      let response;
+      if (method === "POST") {
+        response = await axios.post(GROSS_URL, JSON.stringify(log), {
+          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          // withCredentials: true,
+        });
+      } else if (method === "PUT") {
+        response = await axios.put(GROSS_URL, JSON.stringify(log), {
+          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          // withCredentials: true,
+        });
+      }
       console.log(response);
       if (response.status === 200) closeForm({ reload: true });
     } catch (err) {
@@ -188,7 +201,7 @@ const GrossForm = ({ drivers, closeForm, dispatchers }) => {
         <div className="row">
           <Select name="driver" selections={DRIVERS} isObject={false} value={log.driver} label="Driver" onChange={handleChange} error={errors.driver} />
           <Select name="dispatcher" selections={DISPATCHERS} isObject={false} value={log.dispatcher} label="Dispatcher" onChange={handleChange} error={errors.dispatcher} />
-          <div></div>
+          <Checkbox name="autobooker" checked={log.autobooker} label="Booked by Autobooker" onChange={handleChange} error={errors.autobooker} />
         </div>
         <div className="row">
           <Input name="original_rate" type="number" value={log.original_rate} label="Original rate*" onChange={handleChange} error={errors.original_rate} />
@@ -198,7 +211,7 @@ const GrossForm = ({ drivers, closeForm, dispatchers }) => {
         <div className="row">
           <Input name="total_miles" type="number" value={log.total_miles} label="Total miles*" onChange={handleChange} error={errors.total_miles} />
           <Select name="budget_type" selections={BUDGET_TYPE} isObject={true} value={log.budget_type} label="Budget type*" onChange={handleChange} error={errors.budget_type} />
-          <Checkbox name="autobooker" checked={log.autobooker} label="Booked by Autobooker" onChange={handleChange} error={errors.autobooker} />
+          <Input name="carrier" type="text" value={log.carrier} label="Carrier*" onChange={handleChange} error={errors.carrier} />
         </div>
         <div className="row">
           <Input name="bol_number" type="text" value={log.bol_number} label="BOL number" onChange={handleChange} error={errors.bol_number} />

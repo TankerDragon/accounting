@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 // import icons
 import { BsPencil } from "react-icons/bs";
+import { BiUser } from "react-icons/bi";
 
 const fixDate = (dateTime) => {
   const time = new Date(dateTime);
@@ -14,15 +15,18 @@ const getName = (id, names) => {
   return "! name not found !";
 };
 
-const GrossTable = ({ logs, drivers, dispatchers }) => {
+const GrossTable = ({ logs, drivers, dispatchers, handleEdit }) => {
   const navigate = useNavigate();
 
   return (
     <table className="table">
       <thead>
         <tr>
-          <th>№</th>
+          <th>
+            <BiUser />
+          </th>
           <th>PCS number</th>
+          <th>Carrier</th>
           <th>Load ID</th>
           <th>Date and Time</th>
           <th>Dispatcher</th>
@@ -50,6 +54,7 @@ const GrossTable = ({ logs, drivers, dispatchers }) => {
             <tr key={log.id}>
               <td>{log.user}</td>
               <td>{log.pcs_number}</td>
+              <td>{log.carrier}</td>
               <td>{log.bol_number}</td>
               <td>{log.time}</td>
               <td>{getName(log.dispatcher, dispatchers)}</td>
@@ -79,12 +84,12 @@ const GrossTable = ({ logs, drivers, dispatchers }) => {
                   <div
                     className="icon-holder"
                     onClick={() => {
-                      navigate("/edit-log/" + log.id);
+                      handleEdit(log);
                     }}
                   >
                     <BsPencil className="icon edit" />
                   </div>
-                  {log.edited_link && (
+                  {log.is_edited && (
                     <div className="msg">
                       <Link to={"/edit-archive/" + log.id}>edited</Link>
                     </div>

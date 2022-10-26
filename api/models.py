@@ -112,7 +112,8 @@ class Log(models.Model):
     total_miles = models.IntegerField()
     budget_type = models.CharField(max_length=1, choices=BUDGET_TYPE)
     autobooker = models.BooleanField(default=False)
-    bol_number = models.CharField(max_length=32, null=True, blank=True)
+    bol_number = models.CharField(max_length=32)
+    carrier = models.CharField(max_length=32)
     pcs_number = models.CharField(max_length=16)
     trailer = models.CharField(max_length=16, blank=True)
     truck = models.CharField(max_length=16, blank=True)
@@ -121,7 +122,7 @@ class Log(models.Model):
     origin_state = models.CharField(max_length=2, choices=STATES)
     destination = models.CharField(max_length=128)
     destination_state = models.CharField(max_length=2, choices=STATES)
-    time = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField(auto_now_add=True)
     note = models.CharField(max_length=100, null=True, blank=True)
     is_edited = models.BooleanField(default=False)
 

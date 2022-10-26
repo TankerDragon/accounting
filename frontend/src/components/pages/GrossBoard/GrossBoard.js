@@ -12,12 +12,20 @@ const GrossBoard = () => {
   const [logs, setLogs] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [dispatchers, setDispatchers] = useState([]);
+  const [edit, setEdit] = useState({});
 
   const [formOpen, setFormOpen] = useState(false);
+  const [method, setMethod] = useState("POST");
 
   useEffect(() => {
     getLogs();
   }, []);
+
+  const handleEdit = (edit) => {
+    setEdit(edit);
+    setMethod("PUT");
+    setFormOpen(true);
+  };
 
   const closeForm = ({ reload }) => {
     setFormOpen(false);
@@ -41,14 +49,20 @@ const GrossBoard = () => {
     <div className="page-container">
       <div className="row">
         <h1>Gross board</h1>
-        <button className="button" onClick={() => setFormOpen(!formOpen)}>
+        <button
+          className="button"
+          onClick={() => {
+            setMethod("POST");
+            setFormOpen(!formOpen);
+          }}
+        >
           New Gross
         </button>
       </div>
       <div style={{ overflow: "auto", height: "80vh" }}>
-        <GrossTable logs={logs} drivers={drivers} dispatchers={dispatchers} />
+        <GrossTable logs={logs} drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
       </div>
-      {formOpen && <GrossForm drivers={drivers} dispatchers={dispatchers} closeForm={closeForm} />}
+      {formOpen && <GrossForm drivers={drivers} dispatchers={dispatchers} closeForm={closeForm} method={method} edit={edit} />}
     </div>
   );
 };

@@ -154,17 +154,6 @@ def gross(request):
         log_serializer = LogSerializer(instance=log, data=data)
         if log_serializer.is_valid():
             log_serializer.save()
-            # updating driver's budget
-            budget_type = log_serializer.data["budget_type"]
-            change = log_serializer.data["change"]
-            driver = Driver.objects.get(pk=data['driver'])
-            if budget_type == 'D':
-                driver.d_budget = driver.d_budget + change - old_change
-            elif budget_type == 'L':
-                driver.l_budget = driver.l_budget + change - old_change
-            elif budget_type == 'R':
-                driver.r_budget = driver.r_budget + change - old_change
-            driver.save()
             return Response(status=status.HTTP_200_OK)
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

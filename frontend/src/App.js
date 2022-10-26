@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import Home from "./components/Home";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
 import Missing from "./components/Missing";
@@ -8,8 +9,9 @@ import Drivers from "./components/pages/Drivers/Drivers";
 import Accounting from "./components/pages/Accounting/Accounting";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
-import "./App.css";
-import "./index.css";
+import "./styles/App.css";
+import "./styles/index.css";
+import "./styles/home.css";
 
 export const ROLES = {
   Owner: "OWN",
@@ -24,6 +26,7 @@ const App = () => {
       <Routes>
         {/* public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home />} />
 
         {/* protected routes */}
         <Route path="/" element={<Layout />}>
