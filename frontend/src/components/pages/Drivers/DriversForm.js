@@ -1,17 +1,9 @@
 import { useState, useEffect } from "react";
+import { DRIVER_TYPE } from "../../../constants/constants";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
-
-const DRIVER_TYPE = {
-  O88: "Owner operator - 88%",
-  O85: "Owner operator - 85%",
-  C30: "Company driver - 30%",
-  C35: "Company driver - 35%",
-  L: "Lease operator",
-  R: "Rental operator",
-};
 
 const DRIVERS_URL = "/api/drivers/";
 

@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { ROLES } from "./constants/constants";
 import Home from "./components/Home";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
@@ -12,13 +13,6 @@ import RequireAuth from "./components/RequireAuth";
 import "./styles/App.css";
 import "./styles/index.css";
 import "./styles/home.css";
-
-export const ROLES = {
-  Owner: "OWN",
-  Admin: "ADM",
-  Dispatcher: "DIS",
-  Updater: "UPD",
-};
 
 const App = () => {
   return (

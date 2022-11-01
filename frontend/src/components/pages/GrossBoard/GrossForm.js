@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BUDGET_TYPE, GROSS_STATUS, STATES } from "../../../constants/constants";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
 import Input from "../../common/Input";
@@ -6,78 +7,6 @@ import Select from "../../common/Select";
 import Checkbox from "../../common/Checkbox";
 
 const GROSS_URL = "/api/gross/";
-
-const BUDGET_TYPE = {
-  D: "Driver's budget",
-  L: "Lane budget",
-  R: "Recovery budget",
-};
-
-const GROSS_STATUS = {
-  CO: "Covered",
-  SO: "Sold",
-  TO: "Tonu",
-  RJ: "Rejected",
-  RM: "Removed",
-};
-
-const STATES = {
-  AK: "Alaska",
-  AL: "Alabama",
-  AR: "Arkansas",
-  AS: "American Samoa",
-  AZ: "Arizona",
-  CA: "California",
-  CO: "Colorado",
-  CT: "Connecticut",
-  DC: "District of Columbia",
-  DE: "Delaware",
-  FL: "Florida",
-  GA: "Georgia",
-  GU: "Guam",
-  HI: "Hawaii",
-  IA: "Iowa",
-  ID: "Idaho",
-  IL: "Illinois",
-  IN: "Indiana",
-  KS: "Kansas",
-  KY: "Kentucky",
-  LA: "Louisiana",
-  MA: "Massachusetts",
-  MD: "Maryland",
-  ME: "Maine",
-  MI: "Michigan",
-  MN: "Minnesota",
-  MO: "Missouri",
-  MS: "Mississippi",
-  MT: "Montana",
-  NC: "North Carolina",
-  ND: "North Dakota",
-  NE: "Nebraska",
-  NH: "New Hampshire",
-  NJ: "New Jersey",
-  NM: "New Mexico",
-  NV: "Nevada",
-  NY: "New York",
-  OH: "Ohio",
-  OK: "Oklahoma",
-  OR: "Oregon",
-  PA: "Pennsylvania",
-  PR: "Puerto Rico",
-  RI: "Rhode Island",
-  SC: "South Carolina",
-  SD: "South Dakota",
-  TN: "Tennessee",
-  TX: "Texas",
-  UT: "Utah",
-  VA: "Virginia",
-  VI: "Virgin Islands",
-  VT: "Vermont",
-  WA: "Washington",
-  WI: "Wisconsin",
-  WV: "West Virginia",
-  WY: "Wyoming",
-};
 
 const GrossForm = ({ drivers, closeForm, dispatchers, method, edit }) => {
   const { auth } = useAuth();
