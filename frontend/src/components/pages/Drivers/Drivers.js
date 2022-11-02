@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useMessage from "../../../hooks/useMessage";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
 import DriversTable from "./DriversTable";
@@ -8,6 +9,7 @@ const DRIVERS_URL = "/api/drivers/";
 
 const Drivers = () => {
   const { auth } = useAuth();
+  const { createMessage } = useMessage();
 
   const [drivers, setDrivers] = useState([]);
   const [edit, setEdit] = useState({});
@@ -34,6 +36,10 @@ const Drivers = () => {
   };
 
   const getDrivers = async () => {
+    createMessage({
+      type: "success",
+      content: "message",
+    });
     const response = await axios.get(DRIVERS_URL, {
       headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
       // withCredentials: true,
@@ -57,9 +63,7 @@ const Drivers = () => {
           New Driver
         </button>
       </div>
-      <div style={{ overflow: "auto", height: "80vh" }}>
-        <DriversTable drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
-      </div>
+      <DriversTable drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
       {formOpen && <DriversForm closeForm={closeForm} dispatchers={dispatchers} method={method} edit={edit} />}
     </div>
   );

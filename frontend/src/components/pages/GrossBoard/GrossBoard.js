@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
+import useMessage from "../../../hooks/useMessage";
 import axios from "../../../api/axios";
 import GrossTable from "./GrossTable";
 import GrossForm from "./GrossForm";
@@ -8,6 +9,7 @@ const GROSS_URL = "/api/gross/";
 
 const GrossBoard = () => {
   const { auth } = useAuth();
+  const { createMessage } = useMessage();
 
   const [logs, setLogs] = useState([]);
   const [drivers, setDrivers] = useState([]);
@@ -35,14 +37,18 @@ const GrossBoard = () => {
   };
 
   const getLogs = async () => {
-    const response = await axios.get(GROSS_URL, {
-      headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-      // withCredentials: true,
-    });
-    console.log("***data", response);
-    setLogs(response.data.logs);
-    setDrivers(response.data.drivers);
-    setDispatchers(response.data.dispatchers);
+    try {
+      const response = await axios.get(GROSS_URL, {
+        headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+        // withCredentials: true,
+      });
+      console.log("***data", response);
+      setLogs(response.data.logs);
+      setDrivers(response.data.drivers);
+      setDispatchers(response.data.dispatchers);
+    } catch (err) {
+      createMessage({ type: "danger", content: err.message });
+    }
   };
 
   return (
@@ -59,7 +65,7 @@ const GrossBoard = () => {
           New Gross
         </button>
       </div>
-      <div style={{ overflow: "auto", height: "80vh" }}>
+      <div className="table-container">
         <GrossTable logs={logs} drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
       </div>
       {formOpen && <GrossForm drivers={drivers} dispatchers={dispatchers} closeForm={closeForm} method={method} edit={edit} />}

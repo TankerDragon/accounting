@@ -39,14 +39,14 @@ def get_name(id, arr):
 
 # Create your views here.
 @api_view(['GET', 'PATCH'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def test(request):
     # notify_customers.delay('hello')
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def register(request):
     serializer = UserCreateSerializer(data=request.data)
     if serializer.is_valid():
@@ -209,54 +209,49 @@ def archive_edits(request, id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def drivers_board(request, week_before):
-    request.user.is_superuser = True
     # calculating requested week start and week end
     week_start = get_week_start() - datetime.timedelta(days=(7 * week_before))
     week_end = week_start + datetime.timedelta(days=7)
     # till_today = datetime.datetime.now() + datetime.timedelta(days=1)
 
-    dispatchers = User.objects.filter(is_superuser=False).values("username")
+    dispatchers = User.objects.filter(role="DIS").values("username")
     dispatchers_list = [dispatcher["username"] for dispatcher in dispatchers]
     logs = Log.objects.filter(date__gte = week_start, date__lte = week_end)
 
-    if request.user.is_superuser:
-        drivers = Driver.objects.all().values("id", "first_name", "last_name", "dispatcher", "gross_target")
-    else:
-        drivers = Driver.objects.filter(dispatcher=request.user).values("id", "first_name", "last_name", "dispatcher", "gross_target")
-
+    drivers = Driver.objects.all().values("id", "first_name", "last_name", "dispatcher", "gross_target")
     drivers = list(drivers)
     # drivers_serializer = DriversBoardSerializer(drivers, many=True)
     for d in drivers:
         print(d.id)
 
 
-    # for driver in drivers:
-    #     driver.disp =''
-    #     for d in dispatchers_list:
-    #         if driver.dispatcher_id == d[0]:
-    #             driver.disp = d[1]
+    for driver in drivers:
+        driver.disp =''
+        for d in dispatchers_list:
+            if driver.dispatcher_id == d[0]:
+                driver.disp = d[1]
 
-    #     driver_logs = list(filter(lambda l: l.driver_id == driver.id, logs))
-    #     total_miles = 0
-    #     actual_gross = 0
-    #     for l in driver_logs:
-    #         total_miles += l.total_miles
-    #         actual_gross += l.current_rate
+        driver_logs = list(filter(lambda l: l.driver_id == driver.id, logs))
+        total_miles = 0
+        actual_gross = 0
+        for l in driver_logs:
+            total_miles += l.total_miles
+            actual_gross += l.current_rate
 
-    #     driver.loads = len(driver_logs)
-    #     driver.total_miles = total_miles
-    #     driver.actual_gross = actual_gross
-    #     if total_miles == 0:
-    #         driver.rate = 0
-    #     else:    
-    #         driver.rate = round((actual_gross / total_miles)*100) / 100
+        driver.loads = len(driver_logs)
+        driver.total_miles = total_miles
+        driver.actual_gross = actual_gross
+        if total_miles == 0:
+            driver.rate = 0
+        else:    
+            driver.rate = round((actual_gross / total_miles)*100) / 100
 
-    #     if driver.gross_target == 0:
-    #         driver.percentage = 0
-    #     else:    
-    #         driver.percentage = round((actual_gross / driver.gross_target) * 10000) / 100
+        if driver.gross_target == 0:
+            driver.percentage = 0
+        else:    
+            driver.percentage = round((actual_gross / driver.gross_target) * 10000) / 100
 
-    # drivers = sorted(drivers, key=lambda d: d.percentage, reverse=True)
+    drivers = sorted(drivers, key=lambda d: d.percentage, reverse=True)
 
     # context = {
     #     'drivers': drivers, 

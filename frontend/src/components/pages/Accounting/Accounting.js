@@ -1,5 +1,5 @@
 const Accounting = () => {
-  return <div>Accounting</div>;
+  return <div className="page-container">Accounting</div>;
 };
 
 export default Accounting;

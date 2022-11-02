@@ -27,6 +27,12 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
+          <NavLink className="link" to={"/logs"}>
+            <BsArchive />
+            ELD Logs
+          </NavLink>
+        </li>
+        <li>
           <NavLink className="link" to={"/driver-gross"}>
             <RiLineChartLine />
             Drivers' gross

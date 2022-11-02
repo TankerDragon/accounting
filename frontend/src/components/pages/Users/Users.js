@@ -55,9 +55,7 @@ const Users = () => {
           New User
         </button>
       </div>
-      <div style={{ overflow: "auto", height: "80vh" }}>
-        <UsersTable users={users} handleEdit={handleEdit} />
-      </div>
+      <UsersTable users={users} handleEdit={handleEdit} />
       {formOpen && <UsersForm closeForm={closeForm} method={method} edit={edit} />}
     </div>
   );

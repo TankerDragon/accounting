@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useMessage from "../../../hooks/useMessage";
 import { BUDGET_TYPE, GROSS_STATUS, STATES } from "../../../constants/constants";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
@@ -10,6 +11,7 @@ const GROSS_URL = "/api/gross/";
 
 const GrossForm = ({ drivers, closeForm, dispatchers, method, edit }) => {
   const { auth } = useAuth();
+  const { createMessage } = useMessage();
 
   const [errors, setErrors] = useState({});
 
@@ -98,11 +100,15 @@ const GrossForm = ({ drivers, closeForm, dispatchers, method, edit }) => {
         });
       }
       console.log(response);
-      if (response.status === 200) closeForm({ reload: true });
+      if (response.status === 200) {
+        createMessage({ type: "success", content: "Log has been successfully added" });
+        closeForm({ reload: true });
+      }
     } catch (err) {
       console.log(err);
       if (!err?.response) {
-        setErrMsg("No Server Response");
+        // setErrMsg("No Server Response");
+        createMessage({ type: "danger", content: "No Server Response" });
       } else if (err.response?.status === 400) {
         if (err.response.data) {
           const newErrors = {};
@@ -111,12 +117,14 @@ const GrossForm = ({ drivers, closeForm, dispatchers, method, edit }) => {
           });
           setErrors(newErrors);
         } else {
-          setErrMsg(err.message);
+          // setErrMsg(err.message);
+          createMessage({ type: "danger", content: err.message });
         }
       } else if (err.response?.status === 401) {
-        setErrMsg(err.response.data.detail);
+        // setErrMsg(err.response.data.detail);
+        createMessage({ type: "danger", content: err.response.data.detail });
       } else {
-        setErrMsg(err.message);
+        createMessage({ type: "danger", content: err.message });
       }
     }
   };
