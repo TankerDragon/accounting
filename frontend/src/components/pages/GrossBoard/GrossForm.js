@@ -101,7 +101,9 @@ const GrossForm = ({ drivers, closeForm, dispatchers, method, edit }) => {
       }
       console.log(response);
       if (response.status === 200) {
-        createMessage({ type: "success", content: "Log has been successfully added" });
+        if (response.data) {
+          createMessage({ type: "success", content: response.data.success });
+        }
         closeForm({ reload: true });
       }
     } catch (err) {

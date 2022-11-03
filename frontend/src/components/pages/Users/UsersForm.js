@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
+import useMessage from "../../../hooks/useMessage";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
 
@@ -14,6 +15,7 @@ const USERS_URL = "/api/users/";
 
 const UsersForm = ({ closeForm, method, edit }) => {
   const { auth } = useAuth();
+  const { createMessage } = useMessage();
 
   const [errors, setErrors] = useState({});
 
@@ -67,7 +69,12 @@ const UsersForm = ({ closeForm, method, edit }) => {
         });
       }
       console.log(response);
-      if (response.status === 201 || response.status === 200) closeForm({ reload: true });
+      if (response.status === 201 || response.status === 200) {
+        if (response.data) {
+          createMessage({ type: "success", content: response.data.success });
+        }
+        closeForm({ reload: true });
+      }
     } catch (err) {
       console.log(err);
       if (!err?.response) {

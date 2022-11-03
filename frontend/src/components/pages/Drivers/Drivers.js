@@ -36,10 +36,6 @@ const Drivers = () => {
   };
 
   const getDrivers = async () => {
-    createMessage({
-      type: "success",
-      content: "message",
-    });
     const response = await axios.get(DRIVERS_URL, {
       headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
       // withCredentials: true,

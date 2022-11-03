@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import useMessage from "../../../hooks/useMessage";
+import useRequest from "../../../hooks/useRequest";
 import axios from "../../../api/axios";
 import GrossTable from "./GrossTable";
 import GrossForm from "./GrossForm";
@@ -11,6 +12,8 @@ const GrossBoard = () => {
   const { auth } = useAuth();
   const { createMessage } = useMessage();
 
+  const { data } = useRequest(GROSS_URL);
+
   const [logs, setLogs] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [dispatchers, setDispatchers] = useState([]);
@@ -19,9 +22,9 @@ const GrossBoard = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [method, setMethod] = useState("POST");
 
-  useEffect(() => {
-    getLogs();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   const handleEdit = (edit) => {
     setEdit(edit);

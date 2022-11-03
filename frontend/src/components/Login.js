@@ -15,7 +15,6 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/gross-board";
 
-  const userRef = useRef();
   const errRef = useRef();
 
   // joi

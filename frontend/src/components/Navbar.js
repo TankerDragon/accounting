@@ -57,7 +57,7 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
-          <NavLink className="link" to={"/archive"}>
+          <NavLink className="link" to={"/actions"}>
             <BsArchive />
             Actions
           </NavLink>

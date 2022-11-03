@@ -83,6 +83,22 @@ STATES = [
     ("WY", "Wyoming")
 ]
 
+OPERATIONS = [
+    ('cre', 'create'),
+    ('upd', 'update'),
+    ('del', 'delete'),
+    ('dea', 'deactivate'),
+    ('act', 'activate'),
+    ('inv', 'invite'),
+    ('exp', 'expire'),
+]
+TARGET_NAMES = [
+    ('dri', 'driver'),
+    ('use', 'user'),
+    ('gro', 'gross'),
+    ('lin', 'invite link'),
+]
+
 # settings.AUTH_USER_MODEL
 class Driver(models.Model):
     dispatcher = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
@@ -130,3 +146,10 @@ class LogEdit(models.Model):
     original_log = models.ForeignKey(Log, on_delete=models.CASCADE, related_name='original')
     edited_log = models.ForeignKey(Log, on_delete=models.CASCADE, related_name='edited')
     date = models.DateTimeField(auto_now=True)
+
+class Action(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    operation = models.CharField(max_length=3, choices=OPERATIONS)
+    target = models.BigIntegerField(null=True)
+    target_name = models.CharField(max_length=3, choices=TARGET_NAMES)
+    time = models.DateTimeField(auto_now_add=True)

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { DRIVER_TYPE } from "../../../constants/constants";
 import axios from "../../../api/axios";
 import useAuth from "../../../hooks/useAuth";
+import useMessage from "../../../hooks/useMessage";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
 
@@ -9,6 +10,7 @@ const DRIVERS_URL = "/api/drivers/";
 
 const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
   const { auth } = useAuth();
+  const { createMessage } = useMessage();
 
   const [errors, setErrors] = useState({});
 
@@ -22,7 +24,7 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
           last_name: "",
           dispatcher: "",
           driver_type: "L",
-          gross_target: "",
+          gross_target: 10000,
         }
   );
 
@@ -70,7 +72,12 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
       }
 
       console.log(response);
-      if (response.status === 201 || response.status === 200) closeForm({ reload: true });
+      if (response.status === 201 || response.status === 200) {
+        if (response.data) {
+          createMessage({ type: "success", content: response.data.success });
+        }
+        closeForm({ reload: true });
+      }
     } catch (err) {
       console.log(err);
       if (!err?.response) {

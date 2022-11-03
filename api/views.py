@@ -12,7 +12,7 @@ from django.db.models import Q
 from core.serializers import UserSerializer, UserCreateSerializer
 from .serializers import DriverSerializer, DriverNameSerializer, DispatcherNameSerializer, LogSerializer, CreateDriverSerializer, CreateUserSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
 from core.models import User
-from .models import Driver, Log, LogEdit
+from .models import Driver, Log, LogEdit, Action
 from decimal import Decimal
 # from .tasks import notify_customers
 import datetime
@@ -36,6 +36,10 @@ def get_name(id, arr):
         if id == a['id']:
             return a['first_name'] + ' ' + a['last_name']
     return '*name not found'
+
+def generate_action(user, operation, target, name):
+    action = Action(user_id=user, operation=operation, target=target, target_name=name)
+    action.save()
 
 # Create your views here.
 @api_view(['GET', 'PATCH'])
@@ -73,7 +77,8 @@ def drivers(request):
         if role == "OWN" or role == "ADM": 
             driver_serializer = CreateDriverSerializer(data=request.data)
             if driver_serializer.is_valid():
-                driver_serializer.save()
+                new_driver = driver_serializer.save()
+                generate_action(request.user.id, 'cre', new_driver.id, 'dri')
                 return Response({'success': 'driver has been succesfully created'}, status=status.HTTP_201_CREATED)
             return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to create a driver'}, status=status.HTTP_403_FORBIDDEN)
@@ -82,17 +87,22 @@ def drivers(request):
         driver = Driver.objects.get(pk=request.data["id"])
         driver_serializer = CreateDriverSerializer(instance=driver, data=request.data)
         if driver_serializer.is_valid():
-            driver_serializer.save()
+            updated_driver = driver_serializer.save()
+            generate_action(request.user.id, 'upd', updated_driver.id, 'dri')
             return Response({'success': 'driver has been succesfully updated'}, status=status.HTTP_200_OK)
         return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST', 'PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def users(request):
     if request.method == 'GET':
-        users = User.objects.all()
-        user_serializer = UserSerializer(users, many=True)            
+        if request.GET.get('id', None):
+            user = User.objects.get(pk=request.GET.get('id', None))
+            user_serializer = UserSerializer(user)
+        else:
+            users = User.objects.all()
+            user_serializer = UserSerializer(users, many=True)            
         return Response(user_serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'POST':
@@ -102,7 +112,8 @@ def users(request):
         if role == "OWN" or (role == "ADM" and (requested_role != "OWN" and requested_role != "ADM")):
             user_serializer = CreateUserSerializer(data=request.data)
             if user_serializer.is_valid():
-                user_serializer.save()
+                new_user = user_serializer.save()
+                generate_action(request.user.id, 'cre', new_user.id, 'use')
                 return Response({'success': 'user has been succesfully cerated'}, status=status.HTTP_201_CREATED)
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to create user'}, status=status.HTTP_403_FORBIDDEN)
@@ -115,10 +126,11 @@ def users(request):
             user = User.objects.get(pk=request.data["id"])
             user_serializer = UserSerializer(instance=user, data=request.data)
             if user_serializer.is_valid():
-                user_serializer.save()
+                updated_user = user_serializer.save()
+                generate_action(request.user.id, 'upd', updated_user.id, 'use')
                 return Response({'success': 'user has been succesfully updated'}, status=status.HTTP_200_OK)
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'detail': 'you have no access to update this user'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'detail': 'you have no access to update to this role'}, status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['GET', 'POST', 'PUT'])
@@ -143,8 +155,9 @@ def gross(request):
         data['user'] = request.user.id
         log_serializer = LogSerializer(data=data)
         if log_serializer.is_valid():
-            log_serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            new_log = log_serializer.save()
+            generate_action(request.user.id, 'cre', new_log.id, 'gro')
+            return Response({'success': 'gross has been succesfully added'}, status=status.HTTP_200_OK)
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'PUT':
@@ -153,8 +166,9 @@ def gross(request):
         old_change = log.change
         log_serializer = LogSerializer(instance=log, data=data)
         if log_serializer.is_valid():
-            log_serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            updated_log = log_serializer.save()
+            generate_action(request.user.id, 'upd', updated_log.id, 'gro')
+            return Response({'success': 'the gross has been succesfully updated'}, status=status.HTTP_200_OK)
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
