@@ -1,15 +1,17 @@
 import imp
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 #
 from api.serializers import ELogSerializer
 from .models import Clone
 
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # Create your views here.
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def logs(request, id):
     if request.method == 'POST':
         data = request.data

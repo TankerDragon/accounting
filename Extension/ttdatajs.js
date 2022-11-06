@@ -123,7 +123,7 @@ const asdflkjttdata_get = async () => {
             // posting all data
             if (post_data_array.length > 0 && ttdata_only_one_send) {
               ttdata_only_one_send = false;
-              let response = await fetch("https://www.dragons.uz/ttdata/" + ttdata_driver_id, {
+              let response = await fetch("https://www.f1tms.net/ttdata/" + ttdata_driver_id, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
