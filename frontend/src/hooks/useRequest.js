@@ -7,26 +7,28 @@ const useRequest = (url) => {
   const { auth } = useAuth();
   const { createMessage } = useMessage();
 
-  const [data, setData] = useState([]); // data can be an object or an array
+  const [drivers, setDrivers] = useState([]);
+  const [dispatchers, setDispatchers] = useState([]);
 
   useEffect(() => {
-    getData();
+    getDrivers();
   }, []);
 
-  const getData = async () => {
+  const getDrivers = async () => {
     try {
       const response = await axios.get(url, {
         headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
         // withCredentials: true,
       });
-      console.log("###***data", response.data);
-      setData(response.data.drivers);
-      console.log("$$", data);
+      console.log("***data", response);
+      setDrivers(response.data.drivers);
+      setDispatchers(response.data.dispatchers);
     } catch (err) {
       createMessage({ type: "danger", content: err.message });
     }
   };
-  return { data };
+
+  return { drivers, dispatchers, getDrivers };
 };
 
 export default useRequest;
