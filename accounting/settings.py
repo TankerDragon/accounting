@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'debug_toolbar',
     'api',
-    'core'
+    'core',
+    'ttdata'
 ]
 
 

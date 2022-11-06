@@ -101,7 +101,10 @@ class LogSerializer (ModelSerializer):
         return instance
 
 
-
+class ELogSerializer(ModelSerializer):
+    class Meta:
+        model = Log
+        fields = ['id', 'driver', 'status', 'date', 'time', 'location', 'lat', 'lng', 'vehicle', 'odometer', 'eng_hours', 'notes', 'document', 'trailer']
 
 # class EditLogSerializer (ModelSerializer):
 #     class Meta:

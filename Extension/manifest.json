@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "TT ELD copier",
+  "description": "This extension changes the background image of the google homepage",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": ["https://app.tteld.com/*", "https://app.tteld.net/*"],
+      "js": ["ttdatajs.js"]
+    }
+  ]
+}
