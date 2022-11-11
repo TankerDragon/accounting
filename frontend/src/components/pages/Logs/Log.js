@@ -24,7 +24,7 @@ const Log = () => {
           })}
         </div>
       </div>
-      <table className="table">
+      <table className="eld-table">
         <thead>
           <tr>
             <th>№</th>
@@ -46,7 +46,9 @@ const Log = () => {
             return (
               <tr key={log.id}>
                 <td>{index + 1}</td>
-                <td>{log.status}</td>
+                <td>
+                  <span className="status">{log.status}</span>
+                </td>
                 <td>{log.time}</td>
                 <td>*</td>
                 <td>{log.location}</td>

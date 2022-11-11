@@ -341,19 +341,3 @@ body {
 .message-bar .success {
   background-color: rgb(74, 178, 72);
 }
-/* ELD */
-.graph {
-  width: 100%;
-  position: relative;
-}
-.graph img {
-  width: 100%;
-}
-.graph div {
-  border: 1px solid blue;
-  position: absolute;
-  top: 16%;
-  left: 2.75%;
-  width: 96.85%;
-  height: 82.5%;
-}

@@ -114,7 +114,7 @@ def users(request):
             if user_serializer.is_valid():
                 new_user = user_serializer.save()
                 generate_action(request.user.id, 'cre', new_user.id, 'use')
-                return Response({'success': 'user has been succesfully cerated'}, status=status.HTTP_201_CREATED)
+                return Response({'success': 'user has been succesfully created'}, status=status.HTTP_201_CREATED)
             return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to create user'}, status=status.HTTP_403_FORBIDDEN)
 

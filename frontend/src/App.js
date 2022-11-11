@@ -16,6 +16,7 @@ import RequireAuth from "./components/RequireAuth";
 import "./styles/App.css";
 import "./styles/index.css";
 import "./styles/home.css";
+import "./styles/eld.css";
 
 const App = () => {
   return (

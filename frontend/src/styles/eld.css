@@ -1,0 +1,87 @@
+.graph {
+  width: 100%;
+  position: relative;
+}
+.graph img {
+  width: 100%;
+}
+.graph div {
+  border: 1px solid blue;
+  position: absolute;
+  top: 16%;
+  left: 2.75%;
+  width: 96.85%;
+  height: 82.5%;
+}
+/*  */
+.eld-table {
+  border-collapse: collapse;
+  padding: 0px;
+  margin-top: 40px;
+  width: 100%;
+}
+.eld-table td,
+.eld-table th {
+  padding: 8px 10px;
+  text-align: left;
+}
+.eld-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--color-container);
+  border-bottom: 2px solid var(--color-text);
+  z-index: 3;
+}
+.eld-table thead tr {
+  white-space: nowrap;
+}
+/* .eld-table tbody tr {
+  transition: 0.4s ease;
+} */
+.eld-table tbody tr td {
+  white-space: nowrap;
+  border-bottom: 1px solid rgb(157, 157, 157);
+}
+.eld-table tbody tr:hover {
+  background: var(--color-tr-hover);
+}
+.eld-table a {
+  width: 100%;
+  display: block;
+  text-decoration: none;
+  color: black;
+}
+.eld-table .actions {
+  width: 130px;
+  height: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0.6;
+  transition: 0.3s ease;
+}
+.eld-table .icon-holder {
+  position: relative;
+  width: 27px;
+  height: 27px;
+  background-color: rgb(77, 77, 77);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.eld-table .icon-holder .icon {
+  font-size: 1.3rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.eld-table .icon-holder:active {
+  background-color: gray;
+}
+.eld-table tbody tr:hover .actions {
+  opacity: 1;
+}
+.eld-table .status {
+  background: yellow;
+  padding: 10px;
+}
