@@ -1,24 +1,23 @@
 import { useState, useEffect } from "react";
 import { DRIVER_TYPE } from "../../../constants/constants";
-import axios from "../../../api/axios";
-import useAuth from "../../../hooks/useAuth";
-import useMessage from "../../../hooks/useMessage";
+import useRequest from "../../../hooks/useRequest";
+import Form from "../../common/Form"
 import Input from "../../common/Input";
 import Select from "../../common/Select";
+import LoadingButton from "../../common/LoadingButton";
 
 const DRIVERS_URL = "/api/drivers/";
 
 const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
-  const { auth } = useAuth();
-  const { createMessage } = useMessage();
-
-  const [errors, setErrors] = useState({});
+  const {errors, postPutData, isLoading} = useRequest(DRIVERS_URL)
 
   const [errMsg, setErrMsg] = useState("");
 
   const [log, setLog] = useState(
     method === "PUT"
-      ? edit
+      ? {
+        ...edit
+      }
       : {
           first_name: "",
           last_name: "",
@@ -52,56 +51,20 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
     // setErrors(errors === null ? {} : errors);
     // console.log(errors);
     // if (errors) return;
-    console.log("submitted", method);
     setErrMsg("");
-    setErrors({});
 
     // post or put to server
-    try {
-      let response;
-      if (method === "POST") {
-        response = await axios.post(DRIVERS_URL, JSON.stringify(log), {
-          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-          // withCredentials: true,
-        });
-      } else if (method === "PUT") {
-        response = await axios.put(DRIVERS_URL, JSON.stringify(log), {
-          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-          // withCredentials: true,
-        });
-      }
-
-      console.log(response);
-      if (response.status === 201 || response.status === 200) {
-        if (response.data) {
-          createMessage({ type: "success", content: response.data.success });
-        }
-        closeForm({ reload: true });
-      }
-    } catch (err) {
-      console.log(err);
-      if (!err?.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        if (err.response.data) {
-          const newErrors = {};
-          Object.keys(err.response.data).forEach((s) => {
-            newErrors[s] = err.response.data[s];
-          });
-          setErrors(newErrors);
-        } else {
-          setErrMsg(err.message);
-        }
-      } else if (err.response.status === 401 || err.response.status === 403) {
-        setErrMsg(err.response.data.detail);
-      } else {
-        setErrMsg(err.message);
-      }
-    }
+    console.log("submitted", method);
+    console.log(log);
+    postPutData(method, log, closeForm)
   };
+  const handelCancel = (e) => {
+    e.preventDefault();
+    closeForm({reload: false});
+  }
 
   return (
-    <div className="form drivers-form">
+    <Form>
       <div className="row">
         <h1>Add new driver</h1>
       </div>
@@ -123,12 +86,14 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
         </p>
         <div className="buttons">
           <div>
-            <button>OK</button>
-            <button onClick={closeForm}>Cancel</button>
+            {
+              isLoading ? <LoadingButton /> : <button>OK</button>
+            }
+            <button onClick={handelCancel}>Cancel</button>
           </div>
         </div>
       </form>
-    </div>
+    </Form>
   );
 };
 

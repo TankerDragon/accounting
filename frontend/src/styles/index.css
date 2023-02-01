@@ -1,7 +1,7 @@
 :root {
   --color-container: white;
   --color-background: #f4f5f7;
-  --color-box-shadow: #b3b3b3;
+  --color-box-shadow: #b9b9b9b2;
   --color-text: #232323;
   --color-label: #4b4b4b;
   --color-mode-changer-background: #3e516d;
@@ -12,7 +12,7 @@
 .dark {
   --color-container: #293649;
   --color-background: #202a38;
-  --color-box-shadow: #202a38;
+  --color-box-shadow: #202a38d8;
   --color-text: #e7e7e7;
   --color-label: #dbdbdb;
   --color-mode-changer-background: rgb(233, 233, 233);
@@ -49,6 +49,10 @@
 .err-input {
   color: rgb(255, 69, 69);
   margin-top: 5px;
+  font-size: 12px;
+}
+.red-border {
+  border: 1px solid rgb(255, 69, 69) !important;
 }
 .offscreen {
   display: none;

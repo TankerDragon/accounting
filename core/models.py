@@ -1,13 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from .constants import USER_ROLES
 
-
-USER_ROLES = [
-    ('OWN', 'Owner'),
-    ('ADM', 'Admin'),
-    ('DIS', 'Dispatcher'),
-    ('UPD', 'Updater'),
-]
 
 # Create your models here.
 class User(AbstractUser):

@@ -2,7 +2,15 @@ from rest_framework.serializers import ModelSerializer, Serializer
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from core.models import User
-from .models import Driver, Log
+from core.serializers import UserSerializer
+from .models import Driver, Log, Appuser
+
+
+class AppUserSerializer(ModelSerializer):
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = Appuser
+        fields = '__all__'
 
 
 class LogDecimalFielsSerializer(Serializer):

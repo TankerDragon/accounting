@@ -12,26 +12,23 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
 import os
 # from celery.schedules import crontab
-#
-# import json
-
-
-# f = open('/home/dragon/corefiles/passwords.json')
-# UBUNTU_MYSQL_PASSWORD = json.load(f)["mysql"]
-# f.close()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4paf#)dp_cq56c=$^oatnbaf!g-9t@068nujdt3i=$32!xplnt'
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -105,8 +102,7 @@ DATABASES = {
         'HOST': 'localhost',
         'NAME': 'accounting',
         'USER': 'root',
-        'PASSWORD': '@akb21s4m$',
-        # 'PASSWORD': UBUNTU_MYSQL_PASSWORD,
+        'PASSWORD': MYSQL_PASSWORD,
     }
 }
 

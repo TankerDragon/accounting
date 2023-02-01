@@ -94,8 +94,8 @@ export const Style = {
     width: calc(100% - 40px);
     margin: auto;
     box-shadow: 0px 0px 7px 0px var(--color-box-shadow);
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
     padding: 15px;
   `,
   ModeChanger: styled.div`

@@ -1,8 +1,11 @@
 import { Style } from "./styles/Style.style";
 import { useEffect, useState } from "react";
-import { TbMoonStars, TbSun } from "react-icons/tb";
+import useAuth from "../hooks/useAuth";
+import { TbMoonStars, TbSun, TbUser } from "react-icons/tb";
 
 const ControlBar = () => {
+  const { auth } = useAuth();
+
   //   const checkIsDarkMode = localStorage.getItem("isDarkMode") === null || "no" ? false : true;
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -22,7 +25,10 @@ const ControlBar = () => {
   return (
     <Style.ControlBar>
       <div className="row">
-        <p>*Control panel</p>
+        <div className="row" style={{width: "80px"}}>
+          <TbUser />
+          <p>{auth.username}</p>
+        </div>
         <Style.ModeChanger onClick={changeMode}>
           {isDarkMode && <TbSun />}
           {!isDarkMode && <TbMoonStars />}

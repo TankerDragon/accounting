@@ -1,5 +1,6 @@
 // import icons
 import { BsPencil } from "react-icons/bs";
+import { DRIVER_TYPE } from "../../../constants/constants";
 
 const getName = (id, names) => {
   for (let name of names) {
@@ -18,56 +19,50 @@ const getChoice = (choice, choices) => {
   return found;
 };
 
-const DRIVER_TYPE = {
-  O88: "Owner operator - 88%",
-  O85: "Owner operator - 85%",
-  C30: "Company driver - 30%",
-  C35: "Company driver - 35%",
-  L: "Lease operator",
-  R: "Rental operator",
-};
-
 const DriversTable = ({ drivers, dispatchers, handleEdit }) => {
+  console.log("%%%%%%%%%%%%%%%%%%", drivers, dispatchers)
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th>№</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Dispatcher</th>
-          <th>Driver type</th>
-          <th>Gross target</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {drivers.map((driver, index) => {
-          return (
-            <tr key={driver.id}>
-              <td>{index + 1}</td>
-              <td>{driver.first_name}</td>
-              <td>{driver.last_name}</td>
-              <td>{getName(driver.dispatcher, dispatchers)}</td>
-              <td>{getChoice(driver.driver_type, DRIVER_TYPE)}</td>
-              <td>{driver.gross_target}</td>
-              <td>
-                <div className="actions">
-                  <div
-                    className="icon-holder"
-                    onClick={() => {
-                      handleEdit(driver);
-                    }}
-                  >
-                    <BsPencil className="icon edit" />
+    <div className="table-container">
+      <table className="table">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Dispatcher</th>
+            <th>Driver type</th>
+            <th>Gross target</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {drivers.map((driver, index) => {
+            return (
+              <tr key={driver.id}>
+                <td>{index + 1}</td>
+                <td>{driver.first_name}</td>
+                <td>{driver.last_name}</td>
+                <td>{getName(driver.dispatcher, dispatchers)}</td>
+                <td>{getChoice(driver.driver_type, DRIVER_TYPE)}</td>
+                <td>{driver.gross_target}</td>
+                <td>
+                  <div className="actions">
+                    <div
+                      className="icon-holder"
+                      onClick={() => {
+                        handleEdit(driver);
+                      }}
+                    >
+                      <BsPencil className="icon edit" />
+                    </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

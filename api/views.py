@@ -1,27 +1,18 @@
-# data['date'] = datetime.date.today()
-# data['time'] = datetime.datetime.now().strftime("%H:%M:%S")
-###
-from lib2to3.pgen2 import driver
+import datetime
+from decimal import Decimal
 from django.shortcuts import render, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
-from django.conf import settings
+# from django.conf import settings
 from django.db.models import Q
 from core.serializers import UserSerializer, UserCreateSerializer
-from .serializers import DriverSerializer, DriverNameSerializer, DispatcherNameSerializer, LogSerializer, CreateDriverSerializer, CreateUserSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
 from core.models import User
+from core.constants import WEEKDAYS
+from .serializers import DriverSerializer, DriverNameSerializer, DispatcherNameSerializer, LogSerializer, CreateDriverSerializer, CreateUserSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
 from .models import Driver, Log, LogEdit, Action
-from decimal import Decimal
 # from .tasks import notify_customers
-import datetime
-
-
-# constants
-
-WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
 
 #funtions
 def get_week_start():

@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import useMessage from "../../../hooks/useMessage";
+import { AnimatePresence } from "framer-motion";
 import useRequest from "../../../hooks/useRequest";
-import axios from "../../../api/axios";
-import useAuth from "../../../hooks/useAuth";
 import DriversTable from "./DriversTable";
 import DriversForm from "./DriversForm";
+import Loading from "../../common/Loading";
 
 const DRIVERS_URL = "/api/drivers/";
 
 const Drivers = () => {
-  const { drivers, dispatchers, getDrivers } = useRequest(DRIVERS_URL);
+  const request = useRequest(DRIVERS_URL);
+
+  useEffect(() => {
+    request.getData();
+  }, []);
 
   const [formOpen, setFormOpen] = useState(false);
   const [edit, setEdit] = useState({});
@@ -18,7 +21,7 @@ const Drivers = () => {
   const closeForm = ({ reload }) => {
     setFormOpen(false);
     if (reload) {
-      getDrivers();
+      request.getData();
     }
   };
 
@@ -36,14 +39,19 @@ const Drivers = () => {
           className="button"
           onClick={() => {
             setMethod("POST");
-            setFormOpen(!formOpen);
+            setFormOpen(true);
           }}
         >
           New Driver
         </button>
       </div>
-      <DriversTable drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
-      {formOpen && <DriversForm closeForm={closeForm} dispatchers={dispatchers} method={method} edit={edit} />}
+      {
+        request.isLoading ? <Loading /> :
+        <DriversTable drivers={request.data.drivers || [] } dispatchers={request.data.dispatchers || []} handleEdit={handleEdit} />
+      }
+      <AnimatePresence initial={false}>
+        {formOpen && <DriversForm closeForm={closeForm} dispatchers={request.data.dispatchers || []} method={method} edit={edit} />}
+      </AnimatePresence>
     </div>
   );
 };
