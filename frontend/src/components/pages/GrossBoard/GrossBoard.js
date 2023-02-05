@@ -1,54 +1,47 @@
 import { useEffect, useState } from "react";
-import useAuth from "../../../hooks/useAuth";
-import useMessage from "../../../hooks/useMessage";
-import axios from "../../../api/axios";
+import { AnimatePresence } from "framer-motion";
 import GrossTable from "./GrossTable";
 import GrossForm from "./GrossForm";
-
-const GROSS_URL = "/api/gross/";
+import useRequest from "../../../hooks/useRequest";
+import {
+  GROSS_URL,
+  DRIVERS_LIST_URL,
+  DISPATCHERS_LIST_URL,
+  CARRIERS_LIST_URL,
+} from "../../../constants/constants";
+import Loading from "../../common/Loading";
 
 const GrossBoard = () => {
-  const { auth } = useAuth();
-  const { createMessage } = useMessage();
-
-  const [logs, setLogs] = useState([]);
-  const [drivers, setDrivers] = useState([]);
-  const [dispatchers, setDispatchers] = useState([]);
-  const [edit, setEdit] = useState({});
-
-  const [formOpen, setFormOpen] = useState(false);
-  const [method, setMethod] = useState("POST");
+  const request = useRequest(GROSS_URL);
+  const driversRequest = useRequest(DRIVERS_LIST_URL);
+  const dispatchersRequest = useRequest(DISPATCHERS_LIST_URL);
+  const carriersRequest = useRequest(CARRIERS_LIST_URL);
 
   useEffect(() => {
-    getLogs();
+    request.getData();
+    driversRequest.getData();
+    dispatchersRequest.getData();
+    carriersRequest.getData();
   }, []);
 
-  const handleEdit = (edit) => {
-    setEdit(edit);
-    setMethod("PUT");
-    setFormOpen(true);
-  };
+  const [formOpen, setFormOpen] = useState(false);
+  const [edit, setEdit] = useState({});
+  const [method, setMethod] = useState("POST");
 
   const closeForm = ({ reload }) => {
     setFormOpen(false);
     if (reload) {
-      getLogs();
+      request.getData();
+      driversRequest.getData();
+      dispatchersRequest.getData();
+      carriersRequest.getData();
     }
   };
 
-  const getLogs = async () => {
-    try {
-      const response = await axios.get(GROSS_URL, {
-        headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-        // withCredentials: true,
-      });
-      console.log("***data", response);
-      setLogs(response.data.logs);
-      setDrivers(response.data.drivers);
-      setDispatchers(response.data.dispatchers);
-    } catch (err) {
-      createMessage({ type: "danger", content: err.message });
-    }
+  const handleEdit = (driver) => {
+    setEdit(driver);
+    setMethod("PUT");
+    setFormOpen(true);
   };
 
   return (
@@ -65,10 +58,29 @@ const GrossBoard = () => {
           New Gross
         </button>
       </div>
-      <div className="table-container">
-        <GrossTable logs={logs} drivers={drivers} dispatchers={dispatchers} handleEdit={handleEdit} />
-      </div>
-      {formOpen && <GrossForm drivers={drivers} dispatchers={dispatchers} closeForm={closeForm} method={method} edit={edit} />}
+      {request.isLoading ? (
+        <Loading />
+      ) : (
+        <GrossTable
+          logs={request.data}
+          drivers={driversRequest.data}
+          dispatchers={dispatchersRequest.data}
+          carriers={carriersRequest.data}
+          handleEdit={handleEdit}
+        />
+      )}
+      <AnimatePresence initial={false}>
+        {formOpen && (
+          <GrossForm
+            drivers={driversRequest.data}
+            dispatchers={dispatchersRequest.data}
+            carriers={carriersRequest.data}
+            closeForm={closeForm}
+            method={method}
+            edit={edit}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

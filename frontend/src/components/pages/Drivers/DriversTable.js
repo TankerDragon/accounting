@@ -1,4 +1,3 @@
-// import icons
 import { BsPencil } from "react-icons/bs";
 import { DRIVER_TYPE } from "../../../constants/constants";
 
@@ -6,11 +5,11 @@ const getName = (id, names) => {
   for (let name of names) {
     if (name.id === id) return name.first_name + " " + name.last_name;
   }
-  return "! name not found !";
+  return "";
 };
 
 const getChoice = (choice, choices) => {
-  let found = "!!! not found !!!";
+  let found = "*not found";
   Object.keys(choices).forEach((ch) => {
     if (ch === choice) {
       found = choices[ch];
@@ -20,7 +19,6 @@ const getChoice = (choice, choices) => {
 };
 
 const DriversTable = ({ drivers, dispatchers, handleEdit }) => {
-  console.log("%%%%%%%%%%%%%%%%%%", drivers, dispatchers)
   return (
     <div className="table-container">
       <table className="table">

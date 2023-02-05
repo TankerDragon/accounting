@@ -17,22 +17,27 @@ const useRequest = (url) => {
   //   getData();
   // }, []);
 
-
   const getData = async () => {
     setIsLoading(true);
     try {
       const response = await axios.get(url, {
-        headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "JWT " + auth.accessToken,
+        },
         // withCredentials: true,
       });
       setIsLoading(false);
       setData(response.data);
+      console.log("response data: ", response.data);
     } catch (err) {
       setIsLoading(false);
       if (!err?.response) {
         createMessage({ type: "danger", content: "No Server Response" });
-      }else if(err.response.status === 401) {
+      } else if (err.response.status === 401) {
         navigate("/login");
+      } else if (err.response.status === 403) {
+        createMessage({ type: "danger", content: err.response.data.detail });
       } else {
         createMessage({ type: "danger", content: err.message });
       }
@@ -47,12 +52,18 @@ const useRequest = (url) => {
       let response;
       if (method === "POST") {
         response = await axios.post(url, JSON.stringify(log), {
-          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "JWT " + auth.accessToken,
+          },
           // withCredentials: true,
         });
       } else if (method === "PUT") {
         response = await axios.put(url + "?id=" + log.id, JSON.stringify(log), {
-          headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "JWT " + auth.accessToken,
+          },
           // withCredentials: true,
         });
       }
@@ -78,7 +89,7 @@ const useRequest = (url) => {
           });
           setErrors(newErrors);
         }
-      } else if(err.response.status === 401) {
+      } else if (err.response.status === 401) {
         navigate("/login");
       } else if (err.response.status === 403) {
         createMessage({ type: "danger", content: err.response.data.detail });
@@ -86,7 +97,7 @@ const useRequest = (url) => {
         createMessage({ type: "danger", content: err.message });
       }
     }
-  }
+  };
 
   return { data, errors, isLoading, getData, postPutData };
 };

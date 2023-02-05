@@ -2,7 +2,11 @@ import logo from "../images/logo.png";
 import { NavLink } from "react-router-dom";
 // importing icons
 import { FiLogOut, FiUsers } from "react-icons/fi";
-import { RiExchangeDollarLine, RiLineChartLine, RiAdminLine } from "react-icons/ri";
+import {
+  RiExchangeDollarLine,
+  RiLineChartLine,
+  RiAdminLine,
+} from "react-icons/ri";
 import { HiOutlineKey } from "react-icons/hi";
 import { BsArchive, BsCalculator } from "react-icons/bs";
 
@@ -24,12 +28,6 @@ function Navbar() {
           <NavLink className="link" to={"/accounting"}>
             <BsCalculator />
             Accounting
-          </NavLink>
-        </li>
-        <li>
-          <NavLink className="link" to={"/logs"}>
-            <BsArchive />
-            ELD Logs
           </NavLink>
         </li>
         <li>
@@ -57,16 +55,16 @@ function Navbar() {
           </NavLink>
         </li>
         <li>
+          <NavLink className="link" to={"/carriers"}>
+            <FiUsers />
+            Carriers
+          </NavLink>
+        </li>
+        <li>
           <NavLink className="link" to={"/actions"}>
             <BsArchive />
             Actions
           </NavLink>
-        </li>
-        <li>
-          <a className="ancer" href={"/admin"}>
-            <RiAdminLine />
-            Admin panel
-          </a>
         </li>
       </ul>
       <h3>Actions</h3>

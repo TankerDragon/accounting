@@ -3,14 +3,29 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from core.models import User
 from core.serializers import UserSerializer
-from .models import Driver, Log, Appuser
+from .models import Driver, Load, Carrier
 
 
-class AppUserSerializer(ModelSerializer):
-    user = UserSerializer(read_only=True)
+class DriverSerializer(ModelSerializer):
     class Meta:
-        model = Appuser
+        model = Driver
+        # fields = ['id',  'first_name', 'last_name', 'dispatcher', 'driver_type', 'gross_target', 'is_active']
         fields = '__all__'
+
+class DriverListSerializer(ModelSerializer):
+    class Meta:
+        model = Driver
+        fields = ['id', 'first_name', 'last_name']
+
+class CarrierSerializer(ModelSerializer):
+    class Meta:
+        model = Carrier
+        fields = '__all__'
+
+class CarrierListSerializer(ModelSerializer):
+    class Meta:
+        model = Carrier
+        fields = ['id', 'name']
 
 
 class LogDecimalFielsSerializer(Serializer):
@@ -18,37 +33,10 @@ class LogDecimalFielsSerializer(Serializer):
     original_rate = serializers.DecimalField(max_digits=9, decimal_places=2)
 
 
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'role']
 
-class DriverSerializer(ModelSerializer):
-    # user_id = serializers.IntegerField(read_only=True)
-    # app_version = serializers.CharField(read_only=True)
+class LoadSerializer (ModelSerializer):
     class Meta:
-        model = Driver
-        fields = ['id',  'first_name', 'last_name', 'dispatcher', 'driver_type', 'gross_target', 'is_active']
-
-class DriversBoardSerializer(ModelSerializer):
-    class Meta:
-        model = Driver
-        fields = ['id', 'dispatcher', 'first_name', 'last_name', 'gross_target']
-
-class DriverNameSerializer(ModelSerializer):
-    class Meta:
-        model = Driver
-        fields = ['id', 'first_name', 'last_name']
-    
-
-class DispatcherNameSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name']
-
-class LogSerializer (ModelSerializer):
-    class Meta:
-        model = Log
+        model = Load
         fields = '__all__'
         read_only_fields = ['change', 'time', 'is_edited']
 
@@ -57,13 +45,13 @@ class LogSerializer (ModelSerializer):
         if self.instance and self.instance.pcs_number == value:
             return value
         # othervise
-        numOfPCSNumbers = Log.objects.filter(pcs_number=value).count()
+        numOfPCSNumbers = Load.objects.filter(pcs_number=value).count()
         if numOfPCSNumbers != 0:
             raise serializers.ValidationError(['This number is used before'])
         return value
 
     def create(self, validated_data):
-        log = Log(**validated_data)
+        log = Load(**validated_data)
         log.change =  log.original_rate - log.current_rate
         log.save()
         # updating driver's budget
@@ -76,7 +64,7 @@ class LogSerializer (ModelSerializer):
         log.driver.save()
         return log
 
-    def update(self, instance: Log, validated_data):
+    def update(self, instance: Load, validated_data):
         # updating driver's budget
         old_change = instance.change
         old_type = instance.budget_type
@@ -109,34 +97,11 @@ class LogSerializer (ModelSerializer):
         return instance
 
 
-class ELogSerializer(ModelSerializer):
-    class Meta:
-        model = Log
-        fields = ['id', 'driver', 'status', 'date', 'time', 'location', 'lat', 'lng', 'vehicle', 'odometer', 'eng_hours', 'notes', 'document', 'trailer']
-
 # class EditLogSerializer (ModelSerializer):
 #     class Meta:
 #         model = Log
 #         fields = ['id', 'budget_type', 'autobooker', 'current_rate', 'original_rate', 'change', 'total_miles', 'date', 'pcs_number', 'bol_number', 'note']
 
-class CreateDriverSerializer(ModelSerializer):
-    class Meta:
-        model = Driver
-        fields = ['first_name', 'last_name', 'driver_type', 'dispatcher', 'gross_target']
-
-class CreateUserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'role', 'password']
-
-    def validate_password(self, value: str) -> str:
-        """    Hash value passed by user.    :param value: password of a user    :return: a hashed version of the password    """    
-        return make_password(value)
-
-class UpdateDispatcherSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'role']
 
 # class VehicleSerializer(ModelSerializer):
 #     driver_id = serializers.IntegerField(required=False)

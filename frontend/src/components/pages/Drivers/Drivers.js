@@ -4,8 +4,7 @@ import useRequest from "../../../hooks/useRequest";
 import DriversTable from "./DriversTable";
 import DriversForm from "./DriversForm";
 import Loading from "../../common/Loading";
-
-const DRIVERS_URL = "/api/drivers/";
+import { DRIVERS_URL } from "../../../constants/constants";
 
 const Drivers = () => {
   const request = useRequest(DRIVERS_URL);
@@ -45,12 +44,24 @@ const Drivers = () => {
           New Driver
         </button>
       </div>
-      {
-        request.isLoading ? <Loading /> :
-        <DriversTable drivers={request.data.drivers || [] } dispatchers={request.data.dispatchers || []} handleEdit={handleEdit} />
-      }
+      {request.isLoading ? (
+        <Loading />
+      ) : (
+        <DriversTable
+          drivers={request.data || []}
+          dispatchers={request.data.dispatchers || []}
+          handleEdit={handleEdit}
+        />
+      )}
       <AnimatePresence initial={false}>
-        {formOpen && <DriversForm closeForm={closeForm} dispatchers={request.data.dispatchers || []} method={method} edit={edit} />}
+        {formOpen && (
+          <DriversForm
+            closeForm={closeForm}
+            dispatchers={request.data.dispatchers || []}
+            method={method}
+            edit={edit}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

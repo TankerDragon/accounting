@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const Form = ({children}) => {
+const Form = ({ children }) => {
   const inputErrorVariant = {
     hidden: {
       opacity: 0,
@@ -24,12 +24,18 @@ const Form = ({children}) => {
       left: "50%",
     },
   };
-    
+
   return (
-    <motion.div variants={inputErrorVariant} initial="hidden" animate="visible" exit="exit" className="form">
-        {children}
+    <motion.div
+      variants={inputErrorVariant}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="form"
+    >
+      {children}
     </motion.div>
-  )
-}
+  );
+};
 
 export default Form;

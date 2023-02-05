@@ -1,36 +1,18 @@
 import datetime
+import time
 from decimal import Decimal
 from django.shortcuts import render, HttpResponse
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
-# from django.conf import settings
-from django.db.models import Q
-from core.serializers import UserSerializer, UserCreateSerializer
-from core.models import User
-from core.constants import WEEKDAYS
-from .serializers import DriverSerializer, DriverNameSerializer, DispatcherNameSerializer, LogSerializer, CreateDriverSerializer, CreateUserSerializer, LogDecimalFielsSerializer, UpdateDispatcherSerializer, DriversBoardSerializer
-from .models import Driver, Log, LogEdit, Action
+from core.serializers import UserSerializer, UserCreateSerializer, UserListSerializer, AppUserSerializer
+from core.models import User, Appuser
+from .serializers import DriverSerializer, DriverListSerializer, CarrierSerializer, CarrierListSerializer, LoadSerializer
+from .models import Driver, Carrier, Load
+from .functions import check_permission, get_week_start, generate_action
 # from .tasks import notify_customers
-
-#funtions
-def get_week_start():
-    now = datetime.datetime.now()
-    now = now.replace(hour=0, minute=0, second=0)
-    days = WEEKDAYS.index(now.strftime("%A")) + 1  # starting date from Saturday
-    week_start = now - datetime.timedelta(days=days)
-    return week_start
-
-def get_name(id, arr):
-    for a in arr:
-        if id == a['id']:
-            return a['first_name'] + ' ' + a['last_name']
-    return '*name not found'
-
-def generate_action(user, operation, target, name):
-    action = Action(user_id=user, operation=operation, target=target, target_name=name)
-    action.save()
 
 # Create your views here.
 @api_view(['GET', 'PATCH'])
@@ -40,33 +22,24 @@ def test(request):
     return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def register(request):
-    serializer = UserCreateSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'success': 'created!'}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 @api_view(['GET', 'POST', 'PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def drivers(request):
+    time.sleep(0.7)
     if request.method == 'GET':
-        #preparing dispatcher names
-        dispatcher_names = User.objects.filter(role='DIS').values('id', 'first_name', 'last_name')
-        dispatcher_names_serializer = DispatcherNameSerializer(dispatcher_names, many=True)
-
-        drivers_query = Driver.objects.all().order_by('first_name')
-        drivers_serializer = DriverSerializer(drivers_query, many=True)
-        return Response({"drivers": drivers_serializer.data, "dispatchers": dispatcher_names_serializer.data}, status=status.HTTP_200_OK)
+        if check_permission(request.user, 'view', 'driver'):
+            if request.GET.get('list'):
+                query = Driver.objects.values('id', 'first_name', 'last_name').all()
+                serializer = DriverListSerializer(query, many=True)
+            else:
+                query = Driver.objects.all()
+                serializer = DriverSerializer(query, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'detail': 'you have no access to view drivers'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'POST':
-        # check if requested user has access
-        role = request.user.role
-        if role == "OWN" or role == "ADM": 
-            driver_serializer = CreateDriverSerializer(data=request.data)
+        if check_permission(request.user, 'create', 'driver'):
+            driver_serializer = DriverSerializer(data=request.data)
             if driver_serializer.is_valid():
                 new_driver = driver_serializer.save()
                 generate_action(request.user.id, 'cre', new_driver.id, 'dri')
@@ -75,76 +48,125 @@ def drivers(request):
         return Response({'detail': 'you have no access to create a driver'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'PUT':
-        driver = Driver.objects.get(pk=request.data["id"])
-        driver_serializer = CreateDriverSerializer(instance=driver, data=request.data)
-        if driver_serializer.is_valid():
-            updated_driver = driver_serializer.save()
-            generate_action(request.user.id, 'upd', updated_driver.id, 'dri')
-            return Response({'success': 'driver has been succesfully updated'}, status=status.HTTP_200_OK)
-        return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if check_permission(request.user, 'update', 'driver'):
+            driver = Driver.objects.get(pk=request.data["id"])
+            driver_serializer = DriverSerializer(instance=driver, data=request.data)
+            if driver_serializer.is_valid():
+                updated_driver = driver_serializer.save()
+                generate_action(request.user.id, 'upd', updated_driver.id, 'dri')
+                return Response({'success': 'driver has been succesfully updated'}, status=status.HTTP_200_OK)
+            return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'you have no access to update a driver'}, status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([AllowAny])
 def users(request):
+    time.sleep(0.7)
     if request.method == 'GET':
-        if request.GET.get('id', None):
-            user = User.objects.get(pk=request.GET.get('id', None))
-            user_serializer = UserSerializer(user)
-        else:
-            users = User.objects.all()
-            user_serializer = UserSerializer(users, many=True)            
-        return Response(user_serializer.data, status=status.HTTP_200_OK)
+        if check_permission(request.user, 'view', 'user'):
+            if request.GET.get('id', None):
+                user = User.objects.get(pk=request.GET.get('id'))
+                serializer = UserSerializer(user)
+            elif request.GET.get('list'):
+                if request.GET.get('filter'):
+                # print("$$$$$$ ", request.GET.get('filter'))
+                    users = User.objects.values('id', 'username').filter(role=request.GET.get('filter'))
+                else:
+                    users = User.objects.values('id', 'username').all()
+                serializer = UserListSerializer(users, many=True)
+            else:
+                users = User.objects.all()
+                serializer = UserSerializer(users, many=True)            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'detail': 'you have no access to view users'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'POST':
-        # check if requested user has access and check if requested user can create requested type of user
-        role = request.user.role
-        requested_role = request.data["role"]
-        if role == "OWN" or (role == "ADM" and (requested_role != "OWN" and requested_role != "ADM")):
-            user_serializer = CreateUserSerializer(data=request.data)
-            if user_serializer.is_valid():
+        if check_permission(request.user, 'create', 'user') and not request.data['role'] == 'OWN':
+            user_serializer = UserCreateSerializer(data=request.data)
+            appuser_serializer = AppUserSerializer(data=request.data)
+            valid_user = user_serializer.is_valid()
+            valid_appuser = appuser_serializer.is_valid()
+            if valid_user and valid_appuser:
                 new_user = user_serializer.save()
+                new_appuser = appuser_serializer.save()
+                # clone two models 
+                new_appuser.user = new_user
+                new_appuser.save()
                 generate_action(request.user.id, 'cre', new_user.id, 'use')
                 return Response({'success': 'user has been succesfully created'}, status=status.HTTP_201_CREATED)
-            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(user_serializer.errors | appuser_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to create user'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'PUT':
-        # check if requested user has access and check if requested user can update requested type of user
-        role = request.user.role
-        requested_role = request.data["role"]
-        if role == "OWN" or (role == "ADM" and (requested_role != "OWN" and requested_role != "ADM")):
+        if check_permission(request.user, 'update', 'user') and not request.data['role'] == 'OWN':
             user = User.objects.get(pk=request.data["id"])
-            user_serializer = UserSerializer(instance=user, data=request.data)
-            if user_serializer.is_valid():
-                updated_user = user_serializer.save()
-                generate_action(request.user.id, 'upd', updated_user.id, 'use')
-                return Response({'success': 'user has been succesfully updated'}, status=status.HTTP_200_OK)
-            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'detail': 'you have no access to update to this role'}, status=status.HTTP_403_FORBIDDEN)
+            appuser = Appuser.objects.get(user_id=user.id)
+            if not request.user == user:
+                appuser_serializer = AppUserSerializer(instance=appuser, data=request.data)
+                user_serializer = UserSerializer(instance=user, data=request.data)
+                valid_appuser = appuser_serializer.is_valid()
+                valid_user = user_serializer.is_valid()
+                if valid_appuser and valid_user:
+                    appuser_serializer.save()
+                    updated_user = user_serializer.save()
+                    generate_action(request.user.id, 'upd', updated_user.id, 'use')
+                    return Response({'success': 'user has been succesfully updated'}, status=status.HTTP_200_OK)
+                return Response(user_serializer.errors | appuser_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'you cannot update yourself'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'detail': 'you have no access to update users'}, status=status.HTTP_403_FORBIDDEN)
 
+
+@api_view(['GET', 'POST', 'PUT'])
+@permission_classes([AllowAny])
+def carriers(request):
+    time.sleep(0.7)
+    if request.method == 'GET':
+        if check_permission(request.user, 'view', 'carrier'):
+            if request.GET.get('list'):
+                query = Carrier.objects.values('id', 'name').all()
+                serializer = CarrierListSerializer(query, many=True)
+            else:
+                query = Carrier.objects.all()
+                serializer = CarrierSerializer(query, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'detail': 'you have no access to view carriers'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'POST':
+        if check_permission(request.user, 'create', 'carrier'):
+            serializer = CarrierSerializer(data=request.data)
+            if serializer.is_valid():
+                new_carrier = serializer.save()
+                generate_action(request.user.id, 'cre', new_carrier.id, 'car')
+                return Response({'success': 'carrier has been succesfully created'}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'you have no access to create a carrier'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'PUT':
+        if check_permission(request.user, 'update', 'carrier'):
+            carrier = Carrier.objects.get(pk=request.data["id"])
+            serializer = CarrierSerializer(instance=carrier, data=request.data)
+            if serializer.is_valid():
+                updated_carrier = serializer.save()
+                generate_action(request.user.id, 'upd', updated_carrier.id, 'car')
+                return Response({'success': 'carrier has been succesfully updated'}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'you have no access to update a carrier'}, status=status.HTTP_403_FORBIDDEN)
+    
 
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def gross(request):
+    time.sleep(0.7)
     if request.method == 'GET':
-        #preparing driver names
-        driver_names = Driver.objects.all().values('id', 'first_name', 'last_name')
-        driver_names_serializer = DriverNameSerializer(driver_names, many=True)
-
-        #preparing dispatcher names
-        dispatcher_names = User.objects.filter(role='DIS').values('id', 'first_name', 'last_name')
-        dispatcher_names_serializer = DispatcherNameSerializer(dispatcher_names, many=True)
-
-        queryset = Log.objects.all().order_by('-time')
-        log_serializer = LogSerializer(queryset, many=True)
-
-        return Response({"logs": log_serializer.data, "drivers": driver_names_serializer.data, "dispatchers": dispatcher_names_serializer.data}, status=status.HTTP_200_OK)
+        queryset = Load.objects.all().order_by('-time')
+        log_serializer = LoadSerializer(queryset, many=True)
+        return Response(log_serializer.data, status=status.HTTP_200_OK)
 
     if request.method == "POST":
         data = request.data
         data['user'] = request.user.id
-        log_serializer = LogSerializer(data=data)
+        log_serializer = LoadSerializer(data=data)
         if log_serializer.is_valid():
             new_log = log_serializer.save()
             generate_action(request.user.id, 'cre', new_log.id, 'gro')
@@ -153,9 +175,8 @@ def gross(request):
 
     if request.method == 'PUT':
         data = request.data
-        log = Log.objects.get(pk=data["id"])
-        old_change = log.change
-        log_serializer = LogSerializer(instance=log, data=data)
+        log = Load.objects.get(pk=data["id"])
+        log_serializer = LoadSerializer(instance=log, data=data)
         if log_serializer.is_valid():
             updated_log = log_serializer.save()
             generate_action(request.user.id, 'upd', updated_log.id, 'gro')
@@ -168,6 +189,7 @@ def gross(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def driver_archive(request, id):
+    time.sleep(0.7)
     log_edits = LogEdit.objects.all().values('edited_log')
     logEdits_list = list(map(lambda l: l['edited_log'], log_edits))
     #
@@ -180,7 +202,7 @@ def driver_archive(request, id):
         # drivers_list = list(map(lambda l: l.driver_id, in_group))
         queryset = Log.objects.filter(driver_id = id, is_edited = False).order_by('-date') #, user=request.user
 
-    log_serializer = LogSerializer(queryset, many=True)
+    log_serializer = LoadSerializer(queryset, many=True)
 
     for query in log_serializer.data:
         query["edited_link"] = False
@@ -193,6 +215,7 @@ def driver_archive(request, id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def archive_edits(request, id):
+    time.sleep(0.7)
     #selecting logs only related to given ID
     editGroup = LogEdit.objects.all().order_by('-date') #values('original_log', 'edited_log')
     nextPickID = id
@@ -205,7 +228,7 @@ def archive_edits(request, id):
 
     editedLogs = Log.objects.filter(pk__in = pickedLogs)
 
-    log_serializer = LogSerializer(editedLogs, many=True)
+    log_serializer = LoadSerializer(editedLogs, many=True)
     # reverding data
     data = log_serializer.data[::-1]
     return Response(data, status=status.HTTP_200_OK)

@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
-import axios from "../../../api/axios";
-import useAuth from "../../../hooks/useAuth";
+import { AnimatePresence } from "framer-motion";
+import useRequest from "../../../hooks/useRequest";
 import UsersTable from "./UsersTable";
 import UsersForm from "./UsersForm";
-
-const USERS_URL = "/api/users/";
+import Loading from "../../common/Loading";
+import { USERS_URL } from "../../../constants/constants";
 
 const Users = () => {
-  const { auth } = useAuth();
-
-  const [users, setUsers] = useState([]);
-  const [edit, setEdit] = useState({});
-
-  const [formOpen, setFormOpen] = useState(false);
-  const [method, setMethod] = useState("POST");
+  const request = useRequest(USERS_URL);
 
   useEffect(() => {
-    getUsers();
+    request.getData();
   }, []);
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [edit, setEdit] = useState({});
+  const [method, setMethod] = useState("POST");
 
   const closeForm = ({ reload }) => {
     setFormOpen(false);
     if (reload) {
-      getUsers();
+      request.getData();
     }
   };
 
@@ -30,15 +28,6 @@ const Users = () => {
     setEdit(handle);
     setMethod("PUT");
     setFormOpen(true);
-  };
-
-  const getUsers = async () => {
-    const response = await axios.get(USERS_URL, {
-      headers: { "Content-Type": "application/json", Authorization: "JWT " + auth.accessToken },
-      // withCredentials: true,
-    });
-    console.log("***data", response);
-    setUsers(response.data);
   };
 
   return (
@@ -49,14 +38,22 @@ const Users = () => {
           className="button"
           onClick={() => {
             setMethod("POST");
-            setFormOpen(!formOpen);
+            setFormOpen(true);
           }}
         >
           New User
         </button>
       </div>
-      <UsersTable users={users} handleEdit={handleEdit} />
-      {formOpen && <UsersForm closeForm={closeForm} method={method} edit={edit} />}
+      {request.isLoading ? (
+        <Loading />
+      ) : (
+        <UsersTable users={request.data} handleEdit={handleEdit} />
+      )}
+      <AnimatePresence initial={false}>
+        {formOpen && (
+          <UsersForm closeForm={closeForm} method={method} edit={edit} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

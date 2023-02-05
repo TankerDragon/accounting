@@ -18,6 +18,7 @@ DRIVER_TYPE = [
     ('L', 'Lease operator'),
     ('R', 'Rental operator')
 ]
+DEFAULT_DRIVER_TYPE = 'L'
 
 DRIVER_STATUS = [
     ('rea', 'Ready'),
@@ -116,6 +117,9 @@ TARGET_NAMES = [
     ('dri', 'driver'),
     ('use', 'user'),
     ('gro', 'gross'),
+    ('car', 'carrier'),
+    ('veh', 'vehicle'),
+    ('tra', 'trailer'),
     ('lin', 'invite link'),
 ]
 

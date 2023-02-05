@@ -1,8 +1,24 @@
+export const DRIVERS_URL = "/api/drivers/";
+export const DRIVERS_LIST_URL = "/api/drivers/?list=True";
+export const USERS_URL = "/api/users/";
+export const USERS_LIST_URL = "/api/users/?list=True";
+export const DISPATCHERS_LIST_URL = "/api/users/?list=True&filter=DIS";
+export const CARRIERS_URL = "/api/carriers/";
+export const CARRIERS_LIST_URL = "/api/carriers/?list=True";
+export const GROSS_URL = "/api/gross/";
+
 export const ROLES = {
   Owner: "OWN",
   Admin: "ADM",
   Dispatcher: "DIS",
   Updater: "UPD",
+};
+
+export const USER_ROLES = {
+  // OWN: "Owner",
+  ADM: "Admin",
+  DIS: "Dispatcher",
+  UPD: "Updater",
 };
 
 export const DRIVER_TYPE = {

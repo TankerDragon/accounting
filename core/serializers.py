@@ -1,7 +1,15 @@
 from djoser.serializers import UserSerializer as BaseUserSerializer, UserCreateSerializer as  BaseUserCreateSerializer
 from django.contrib.auth.hashers import make_password
+from rest_framework.serializers import ModelSerializer
 # from rest_framework import serializers
-# from .models import User
+from .models import User, Appuser
+
+
+class AppUserSerializer(ModelSerializer):
+    class Meta:
+        model = Appuser
+        fields = '__all__'
+
 
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
@@ -13,8 +21,14 @@ class UserCreateSerializer(BaseUserCreateSerializer):
     
 
 class UserSerializer(BaseUserSerializer):
+    appuser = AppUserSerializer(read_only=True)
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'username', 'role', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'role', 'email', 'first_name', 'last_name', 'appuser']
+
+class UserListSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
 
     
 

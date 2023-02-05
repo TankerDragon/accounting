@@ -1,59 +1,29 @@
 from django.db import models
 # from django.conf import settings
 from core.models import User
-from core.constants import DRIVER_TYPE, DRIVER_STATUS, DEFAULT_DRIVER_STATUS, YEARS, DEFAULT_YEAR, STATES, FUEL_TYPE, BUDGET_TYPE, LOAD_STATUS, OPERATIONS, TARGET_NAMES, STATUS_CHOICES, COUNTRIES, TIME_ZONES
+from core.constants import DRIVER_TYPE, DEFAULT_DRIVER_TYPE, DRIVER_STATUS, DEFAULT_DRIVER_STATUS, YEARS, DEFAULT_YEAR, STATES, FUEL_TYPE, BUDGET_TYPE, LOAD_STATUS, OPERATIONS, TARGET_NAMES, STATUS_CHOICES, COUNTRIES, TIME_ZONES
 
 
-# settings.AUTH_USER_MODEL
-class Company(models.Model):
+class Carrier(models.Model):
     name = models.CharField(max_length=63)
     address = models.CharField(max_length=255)
     phone = models.CharField(max_length=15)
     total_gross = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
     total_loads = models.IntegerField(default=0)
-    country = models.CharField(max_length=2, choices=COUNTRIES, default='US')
-    region = models.CharField(max_length=2, choices=STATES, default='AK')
-    city = models.CharField(max_length=127)
-    zip_code = models.CharField(max_length=15)
-    time_zone = models.CharField(max_length=7, choices=TIME_ZONES, default='US/East')
-
-# class Appuser(models.Model):
-#     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-#     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-#     is_active = models.BooleanField(default=1)
-
-#     view_user = models.BooleanField(default=False)
-#     create_user = models.BooleanField(default=False)
-#     update_user = models.BooleanField(default=False)
-#     activate_user = models.BooleanField(default=False)
-
-#     view_driver = models.BooleanField(default=False)
-#     create_driver = models.BooleanField(default=False)
-#     update_driver = models.BooleanField(default=False)
-#     activate_driver = models.BooleanField(default=False)
-
-#     view_vehicle = models.BooleanField(default=False)
-#     create_vehicle = models.BooleanField(default=False)
-#     update_vehicle = models.BooleanField(default=False)
-#     activate_vehicle = models.BooleanField(default=False)
-
-#     view_driver_log = models.BooleanField(default=False)
-#     create_driver_log = models.BooleanField(default=False)
-#     update_driver_log = models.BooleanField(default=False)
-#     activate_driver_log = models.BooleanField(default=False)
+    notes = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Driver(models.Model):
     dispatcher = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    current_load = None
+    # current_load = None
     d_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     l_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     r_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
-    driver_type = models.CharField(max_length=3, choices=DRIVER_TYPE)
+    driver_type = models.CharField(max_length=3, choices=DRIVER_TYPE, default=DEFAULT_DRIVER_TYPE)
     status = models.CharField(max_length=3, choices=DRIVER_STATUS, default=DEFAULT_DRIVER_STATUS)
-    last_status_change = models.DateTimeField()
+    last_status_change = models.DateTimeField(auto_now=True)
     gross_target = models.DecimalField(max_digits=9, decimal_places=2, default=10000.00)
     date_joined = models.DateTimeField(auto_now_add=True)
 
@@ -81,10 +51,19 @@ class Vehicle(models.Model):
     def __str__(self):
         return self.unit_number
 
+
+class Trailer(models.Model):
+    number = models.CharField(max_length=20)
+    note = models.CharField(max_length=255, null=True, blank=True)
+
+
 class Load(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     dispatcher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dispatcher')
+    carrier = models.ForeignKey(Carrier, on_delete=models.SET_NULL, null=True)
+    truck = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True)
+    trailer = models.ForeignKey(Trailer, on_delete=models.SET_NULL, null=True)
     original_rate = models.DecimalField(max_digits=9, decimal_places=2)
     current_rate = models.DecimalField(max_digits=9, decimal_places=2)
     change = models.DecimalField(max_digits=9, decimal_places=2)
@@ -92,10 +71,7 @@ class Load(models.Model):
     budget_type = models.CharField(max_length=1, choices=BUDGET_TYPE)
     autobooker = models.BooleanField(default=False)
     bol_number = models.CharField(max_length=32)
-    carrier = models.CharField(max_length=32)
     pcs_number = models.CharField(max_length=16)
-    trailer = models.CharField(max_length=16, blank=True)
-    truck = models.CharField(max_length=16, blank=True)
     status = models.CharField(max_length=2, choices=LOAD_STATUS)
     origin = models.CharField(max_length=128)
     origin_state = models.CharField(max_length=2, choices=STATES)
@@ -105,10 +81,12 @@ class Load(models.Model):
     note = models.CharField(max_length=100, null=True, blank=True)
     is_edited = models.BooleanField(default=False)
 
+
 class LoadEdit(models.Model):
     original_load = models.ForeignKey(Load, on_delete=models.CASCADE, related_name='original')
     edited_load = models.ForeignKey(Load, on_delete=models.CASCADE, related_name='edited')
     date = models.DateTimeField(auto_now=True)
+
 
 class Action(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
@@ -116,6 +94,7 @@ class Action(models.Model):
     target = models.BigIntegerField(null=True)
     target_name = models.CharField(max_length=3, choices=TARGET_NAMES)
     time = models.DateTimeField(auto_now_add=True)
+
 
 # ELD stuff 
 class Elog(models.Model):

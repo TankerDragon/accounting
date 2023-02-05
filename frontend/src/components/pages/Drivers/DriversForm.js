@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react";
-import { DRIVER_TYPE } from "../../../constants/constants";
+import { DRIVERS_URL, DRIVER_TYPE } from "../../../constants/constants";
 import useRequest from "../../../hooks/useRequest";
-import Form from "../../common/Form"
+import Form from "../../common/Form";
 import Input from "../../common/Input";
 import Select from "../../common/Select";
 import LoadingButton from "../../common/LoadingButton";
 
-const DRIVERS_URL = "/api/drivers/";
-
 const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
-  const {errors, postPutData, isLoading} = useRequest(DRIVERS_URL)
+  const { errors, postPutData, isLoading } = useRequest(DRIVERS_URL);
 
   const [errMsg, setErrMsg] = useState("");
 
   const [log, setLog] = useState(
     method === "PUT"
       ? {
-        ...edit
-      }
+          ...edit,
+        }
       : {
           first_name: "",
           last_name: "",
@@ -31,7 +29,10 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
   const DISPATCHERS = [];
   DISPATCHERS.push(["", "--------"]);
   for (let dispatcher of dispatchers) {
-    DISPATCHERS.push([dispatcher.id, dispatcher.first_name + " " + dispatcher.last_name]);
+    DISPATCHERS.push([
+      dispatcher.id,
+      dispatcher.first_name + " " + dispatcher.last_name,
+    ]);
   }
 
   const handleChange = ({ currentTarget: input }) => {
@@ -56,12 +57,12 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
     // post or put to server
     console.log("submitted", method);
     console.log(log);
-    postPutData(method, log, closeForm)
+    postPutData(method, log, closeForm);
   };
   const handelCancel = (e) => {
     e.preventDefault();
-    closeForm({reload: false});
-  }
+    closeForm({ reload: false });
+  };
 
   return (
     <Form>
@@ -70,15 +71,52 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
       </div>
       <form onSubmit={handleSubmit}>
         <div className="row">
-          <Input name="first_name" type="text" value={log.first_name} label="First name" onChange={handleChange} error={errors.first_name} />
-          <Input name="last_name" type="text" value={log.last_name} label="Last name" onChange={handleChange} error={errors.last_name} />
+          <Input
+            name="first_name"
+            type="text"
+            value={log.first_name}
+            label="First name"
+            onChange={handleChange}
+            error={errors.first_name}
+          />
+          <Input
+            name="last_name"
+            type="text"
+            value={log.last_name}
+            label="Last name"
+            onChange={handleChange}
+            error={errors.last_name}
+          />
         </div>
         <div className="row">
-          <Select name="dispatcher" selections={DISPATCHERS} isObject={false} value={log.dispatcher} label="Dispatcher" onChange={handleChange} error={errors.dispatcher} />
-          <Select name="driver_type" selections={DRIVER_TYPE} isObject={true} value={log.driver_type} label="Driver type" onChange={handleChange} error={errors.driver_type} />
+          <Select
+            name="dispatcher"
+            selections={DISPATCHERS}
+            isObject={false}
+            value={log.dispatcher}
+            label="Dispatcher"
+            onChange={handleChange}
+            error={errors.dispatcher}
+          />
+          <Select
+            name="driver_type"
+            selections={DRIVER_TYPE}
+            isObject={true}
+            value={log.driver_type}
+            label="Driver type"
+            onChange={handleChange}
+            error={errors.driver_type}
+          />
         </div>
         <div className="row">
-          <Input name="gross_target" type="number" value={log.gross_target} label="Gross Target" onChange={handleChange} error={errors.gross_target} />
+          <Input
+            name="gross_target"
+            type="number"
+            value={log.gross_target}
+            label="Gross Target"
+            onChange={handleChange}
+            error={errors.gross_target}
+          />
         </div>
 
         <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
@@ -86,9 +124,7 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
         </p>
         <div className="buttons">
           <div>
-            {
-              isLoading ? <LoadingButton /> : <button>OK</button>
-            }
+            {isLoading ? <LoadingButton /> : <button>OK</button>}
             <button onClick={handelCancel}>Cancel</button>
           </div>
         </div>

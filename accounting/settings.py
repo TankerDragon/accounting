@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'api',
     'core',
-    'ttdata'
 ]
 
 
