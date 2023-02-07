@@ -1,9 +1,9 @@
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer, Serializer, SerializerMethodField
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from core.models import User
 from core.serializers import UserSerializer
-from .models import Driver, Load, Carrier
+from .models import Driver, EditDriver, Load, Carrier
 
 
 class DriverSerializer(ModelSerializer):
@@ -12,10 +12,31 @@ class DriverSerializer(ModelSerializer):
         # fields = ['id',  'first_name', 'last_name', 'dispatcher', 'driver_type', 'gross_target', 'is_active']
         fields = '__all__'
 
+    def update(self, instance: Driver, validated_data):
+        # updating
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # saving updates
+        request_user_id = self.initial_data.get('request_user_id')
+        edit = EditDriver()
+        for attr, value in validated_data.items():
+            setattr(edit, attr, value)
+        edit.driver_id = instance.id
+        edit.user_id = request_user_id
+        edit.save()
+        return instance
+
 class DriverListSerializer(ModelSerializer):
     class Meta:
         model = Driver
         fields = ['id', 'first_name', 'last_name']
+
+class DriverEditSerializer(ModelSerializer):
+    class Meta:
+        model = EditDriver
+        fields = '__all__'
+
 
 class CarrierSerializer(ModelSerializer):
     class Meta:
@@ -33,8 +54,18 @@ class LogDecimalFielsSerializer(Serializer):
     original_rate = serializers.DecimalField(max_digits=9, decimal_places=2)
 
 
+class LoadSerializer(ModelSerializer):
+    change = SerializerMethodField(method_name='calculate_change')
+    class Meta:
+        model = Load
+        fields = '__all__'
+        read_only_fields = ['change']
 
-class LoadSerializer (ModelSerializer):
+    def calculate_change(self, load: Load):
+        return load.original_rate - load.current_rate
+
+
+class LoadSerializerOld (ModelSerializer):
     class Meta:
         model = Load
         fields = '__all__'

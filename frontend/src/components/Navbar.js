@@ -21,7 +21,7 @@ function Navbar() {
         <li>
           <NavLink className="link" to={"/gross-board"}>
             <RiExchangeDollarLine />
-            Gross board
+            Load board
           </NavLink>
         </li>
         <li>

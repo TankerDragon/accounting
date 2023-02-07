@@ -9,28 +9,31 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from core.serializers import UserSerializer, UserCreateSerializer, UserListSerializer, AppUserSerializer
 from core.models import User, Appuser
-from .serializers import DriverSerializer, DriverListSerializer, CarrierSerializer, CarrierListSerializer, LoadSerializer
-from .models import Driver, Carrier, Load
+from .serializers import DriverSerializer, DriverListSerializer, DriverEditSerializer, CarrierSerializer, CarrierListSerializer, LoadSerializer
+from .models import Driver, EditDriver , Carrier, Load
 from .functions import check_permission, get_week_start, generate_action
-# from .tasks import notify_customers
+from .tasks import notify_customers
 
 # Create your views here.
 @api_view(['GET', 'PATCH'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def test(request):
-    # notify_customers.delay('hello')
+    notify_customers.delay('hello')
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([AllowAny])
 def drivers(request):
-    time.sleep(0.7)
+    time.sleep(0.5)
     if request.method == 'GET':
         if check_permission(request.user, 'view', 'driver'):
             if request.GET.get('list'):
                 query = Driver.objects.values('id', 'first_name', 'last_name').all()
                 serializer = DriverListSerializer(query, many=True)
+            elif request.GET.get('updates'):
+                query = EditDriver.objects.filter(driver_id=request.GET.get('updates'))
+                serializer = DriverEditSerializer(query, many=True)
             else:
                 query = Driver.objects.all()
                 serializer = DriverSerializer(query, many=True)
@@ -49,11 +52,11 @@ def drivers(request):
 
     if request.method == 'PUT':
         if check_permission(request.user, 'update', 'driver'):
+            request.data['request_user_id'] = request.user.id
             driver = Driver.objects.get(pk=request.data["id"])
             driver_serializer = DriverSerializer(instance=driver, data=request.data)
             if driver_serializer.is_valid():
-                updated_driver = driver_serializer.save()
-                generate_action(request.user.id, 'upd', updated_driver.id, 'dri')
+                driver_serializer.save()
                 return Response({'success': 'driver has been succesfully updated'}, status=status.HTTP_200_OK)
             return Response(driver_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to update a driver'}, status=status.HTTP_403_FORBIDDEN)
@@ -62,7 +65,7 @@ def drivers(request):
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([AllowAny])
 def users(request):
-    time.sleep(0.7)
+    time.sleep(0.5)
     if request.method == 'GET':
         if check_permission(request.user, 'view', 'user'):
             if request.GET.get('id', None):
@@ -70,7 +73,6 @@ def users(request):
                 serializer = UserSerializer(user)
             elif request.GET.get('list'):
                 if request.GET.get('filter'):
-                # print("$$$$$$ ", request.GET.get('filter'))
                     users = User.objects.values('id', 'username').filter(role=request.GET.get('filter'))
                 else:
                     users = User.objects.values('id', 'username').all()
@@ -95,7 +97,9 @@ def users(request):
                 new_appuser.save()
                 generate_action(request.user.id, 'cre', new_user.id, 'use')
                 return Response({'success': 'user has been succesfully created'}, status=status.HTTP_201_CREATED)
-            return Response(user_serializer.errors | appuser_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            print('****************************')
+            print(user_serializer.errors, appuser_serializer.errors)
+            return Response({**user_serializer.errors, **appuser_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to create user'}, status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'PUT':
@@ -120,7 +124,7 @@ def users(request):
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([AllowAny])
 def carriers(request):
-    time.sleep(0.7)
+    time.sleep(0.5)
     if request.method == 'GET':
         if check_permission(request.user, 'view', 'carrier'):
             if request.GET.get('list'):
@@ -157,7 +161,7 @@ def carriers(request):
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def gross(request):
-    time.sleep(0.7)
+    time.sleep(0.5)
     if request.method == 'GET':
         queryset = Load.objects.all().order_by('-time')
         log_serializer = LoadSerializer(queryset, many=True)
@@ -183,13 +187,37 @@ def gross(request):
             return Response({'success': 'the gross has been succesfully updated'}, status=status.HTTP_200_OK)
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def drivers_board(request):
+    weeks_before = request.GET.get('weeks_before')
+    # calculating requested week start and week end
+    week_start = get_week_start() - datetime.timedelta(days=(7 * weeks_before))
+    week_end = week_start + datetime.timedelta(days=7)
+
+    dispatchers = User.objects.filter(role="DIS").values("username")
+    dispatchers_list = [dispatcher["username"] for dispatcher in dispatchers]
+    logs = Log.objects.filter(date__gte = week_start, date__lte = week_end)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def driver_archive(request, id):
-    time.sleep(0.7)
+    time.sleep(0.5)
     log_edits = LogEdit.objects.all().values('edited_log')
     logEdits_list = list(map(lambda l: l['edited_log'], log_edits))
     #
@@ -215,7 +243,7 @@ def driver_archive(request, id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def archive_edits(request, id):
-    time.sleep(0.7)
+    time.sleep(0.5)
     #selecting logs only related to given ID
     editGroup = LogEdit.objects.all().order_by('-date') #values('original_log', 'edited_log')
     nextPickID = id

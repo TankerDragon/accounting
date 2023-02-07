@@ -227,6 +227,9 @@ body {
   white-space: nowrap;
   border: 1px solid gray;
 }
+.table tbody tr td.updated {
+  background-color: rgba(62, 189, 240, 0.5);
+}
 .table tbody tr:hover {
   background: var(--color-tr-hover);
 }

@@ -9,6 +9,7 @@ import Users from "./components/pages/Users/Users";
 import Drivers from "./components/pages/Drivers/Drivers";
 import Carriers from "./components/pages/Carriers/Carriers";
 import Accounting from "./components/pages/Accounting/Accounting";
+import DriversGross from "./components/pages/DriversGross/DriversGross";
 import Logs from "./components/pages/Logs/Logs";
 import Log from "./components/pages/Logs/Log";
 import Actions from "./components/pages/Actions/Actions";
@@ -53,6 +54,7 @@ const App = () => {
             element={<RequireAuth allowedRoles={[ROLES.Owner, ROLES.Admin]} />}
           >
             <Route path="accounting" element={<Accounting />} />
+            <Route path="driver-gross" element={<DriversGross />} />
           </Route>
           <Route path="/unauthorized" element={<Unauthorized />} />
           {/* catch all */}

@@ -18,3 +18,20 @@ export const Functions = {
     return nd.getFullYear() + "-" + (nd.getMonth() + 1) + "-" + nd.getDate();
   },
 };
+
+export const getName = (id, names) => {
+  for (let name of names) {
+    if (name.id === id) return name.first_name + " " + name.last_name;
+  }
+  return "";
+};
+
+export const getChoice = (choice, choices) => {
+  let found = "*not found";
+  Object.keys(choices).forEach((ch) => {
+    if (ch === choice) {
+      found = choices[ch];
+    }
+  });
+  return found;
+};

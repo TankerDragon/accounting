@@ -193,18 +193,18 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 
-# # celery settings
-# CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'
+# celery settings
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'
 
-# CELERY_BEAT_SCHEDULE = {
-#     'notifyCustomers': {
-#         'task': 'api.tasks.notify_customers',
-#         'schedule': 5, # every five seconds
-#         # 'schedule': crontab(minute='*/15') # every 15 minutes
-#         # 'schedule': crontab(day_of_week=1, hour=7, minute=30) # every monday at 7:30 am
-#         'args': ['hello world'],
-#     }
-# }
+CELERY_BEAT_SCHEDULE = {
+    'notifyCustomers': {
+        'task': 'api.tasks.notify_customers',
+        'schedule': 5, # every five seconds
+        # 'schedule': crontab(minute='*/15') # every 15 minutes
+        # 'schedule': crontab(day_of_week=1, hour=7, minute=30) # every monday at 7:30 am
+        'args': ['hello world'],
+    }
+}
 
 # HTTPS settings
 # CSRF_COOKIE_SECURE = True

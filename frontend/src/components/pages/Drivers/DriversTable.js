@@ -1,24 +1,9 @@
 import { BsPencil } from "react-icons/bs";
+import { GiAnticlockwiseRotation } from "react-icons/gi";
 import { DRIVER_TYPE } from "../../../constants/constants";
+import { getName, getChoice } from "../../../functions/Functions";
 
-const getName = (id, names) => {
-  for (let name of names) {
-    if (name.id === id) return name.first_name + " " + name.last_name;
-  }
-  return "";
-};
-
-const getChoice = (choice, choices) => {
-  let found = "*not found";
-  Object.keys(choices).forEach((ch) => {
-    if (ch === choice) {
-      found = choices[ch];
-    }
-  });
-  return found;
-};
-
-const DriversTable = ({ drivers, dispatchers, handleEdit }) => {
+const DriversTable = ({ drivers, dispatchers, handleEdit, handleUpdates }) => {
   return (
     <div className="table-container">
       <table className="table">
@@ -47,11 +32,21 @@ const DriversTable = ({ drivers, dispatchers, handleEdit }) => {
                   <div className="actions">
                     <div
                       className="icon-holder"
+                      title="edit"
                       onClick={() => {
                         handleEdit(driver);
                       }}
                     >
                       <BsPencil className="icon edit" />
+                    </div>
+                    <div
+                      className="icon-holder"
+                      title="see all updates"
+                      onClick={() => {
+                        handleUpdates(driver);
+                      }}
+                    >
+                      <GiAnticlockwiseRotation className="icon clock" />
                     </div>
                   </div>
                 </td>

@@ -7,11 +7,12 @@ const CarriersTable = ({ carriers, handleEdit }) => {
         <thead>
           <tr>
             <th>№</th>
-            <th>name</th>
+            <th>Name</th>
             <th>Address</th>
             <th>Phone</th>
             <th>Total gross</th>
             <th>Total loads</th>
+            <th>Setup date</th>
             <th>Notes</th>
             <th>Actions</th>
           </tr>
@@ -24,10 +25,9 @@ const CarriersTable = ({ carriers, handleEdit }) => {
                 <td>{carrier.name}</td>
                 <td>{carrier.address}</td>
                 <td>{carrier.phone}</td>
-                {/* <td>{getName(carrier.dispatcher, dispatchers)}</td> */}
-                {/* <td>{getChoice(carrier.carrier_type, carrier_TYPE)}</td> */}
                 <td>{carrier.total_gross}</td>
                 <td>{carrier.total_loads}</td>
+                <td>{carrier.setup_date}</td>
                 <td>{carrier.notes}</td>
                 <td>
                   <div className="actions">
