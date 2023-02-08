@@ -6,11 +6,12 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from core.serializers import UserSerializer, UserCreateSerializer, UserListSerializer, AppUserSerializer
 from core.models import User, Appuser
-from .serializers import DriverSerializer, DriverListSerializer, DriverEditSerializer, CarrierSerializer, CarrierListSerializer, LoadSerializer
-from .models import Driver, EditDriver , Carrier, Load
+from .serializers import DriverSerializer, DriverListSerializer, DriverEditSerializer, CarrierSerializer, CarrierListSerializer, CarrierEditSerializer, LoadSerializer, LoadEditSerializer
+from .models import Driver, EditDriver , Carrier, EditCarrier, Load, EditLoad
 from .functions import check_permission, get_week_start, generate_action
 from .tasks import notify_customers
 
@@ -130,6 +131,9 @@ def carriers(request):
             if request.GET.get('list'):
                 query = Carrier.objects.values('id', 'name').all()
                 serializer = CarrierListSerializer(query, many=True)
+            elif request.GET.get('updates'):
+                query = EditCarrier.objects.filter(carrier_id=request.GET.get('updates'))
+                serializer = CarrierEditSerializer(query, many=True)
             else:
                 query = Carrier.objects.all()
                 serializer = CarrierSerializer(query, many=True)
@@ -148,11 +152,11 @@ def carriers(request):
 
     if request.method == 'PUT':
         if check_permission(request.user, 'update', 'carrier'):
+            request.data['request_user_id'] = request.user.id
             carrier = Carrier.objects.get(pk=request.data["id"])
             serializer = CarrierSerializer(instance=carrier, data=request.data)
             if serializer.is_valid():
-                updated_carrier = serializer.save()
-                generate_action(request.user.id, 'upd', updated_carrier.id, 'car')
+                serializer.save()
                 return Response({'success': 'carrier has been succesfully updated'}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'you have no access to update a carrier'}, status=status.HTTP_403_FORBIDDEN)
@@ -163,9 +167,20 @@ def carriers(request):
 def gross(request):
     time.sleep(0.5)
     if request.method == 'GET':
-        queryset = Load.objects.all().order_by('-time')
-        log_serializer = LoadSerializer(queryset, many=True)
-        return Response(log_serializer.data, status=status.HTTP_200_OK)
+        if request.GET.get('updates'):
+            query = EditLoad.objects.filter(load_id=request.GET.get('updates'))
+            serializer = LoadEditSerializer(query, many=True)
+        elif request.GET.get('pagination'):
+            paginator = PageNumberPagination()
+            paginator.page_size = 1
+            load_objects = Load.objects.all().order_by('-time')
+            result_page = paginator.paginate_queryset(load_objects, request)
+            serializer = LoadSerializer(result_page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        else:
+            query = Load.objects.all().order_by('-time')
+            serializer = LoadSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == "POST":
         data = request.data
@@ -178,12 +193,12 @@ def gross(request):
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'PUT':
+        request.data['request_user_id'] = request.user.id
         data = request.data
         log = Load.objects.get(pk=data["id"])
         log_serializer = LoadSerializer(instance=log, data=data)
         if log_serializer.is_valid():
-            updated_log = log_serializer.save()
-            generate_action(request.user.id, 'upd', updated_log.id, 'gro')
+            log_serializer.save()
             return Response({'success': 'the gross has been succesfully updated'}, status=status.HTTP_200_OK)
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

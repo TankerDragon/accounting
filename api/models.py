@@ -34,7 +34,6 @@ class BaseDriver(models.Model):
     status = models.CharField(max_length=3, choices=DRIVER_STATUS, default=DEFAULT_DRIVER_STATUS)
     gross_target = models.DecimalField(max_digits=9, decimal_places=2, default=10000.00)
     notes = models.CharField(max_length=255, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
     class Meta:
         abstract = True
 
@@ -128,6 +127,9 @@ class Load(BaseLoad):
     time = models.DateTimeField(auto_now_add=True)
 
 class EditLoad(BaseLoad):
+    bol_number = models.CharField(max_length=32, unique=False)
+    pcs_number = models.CharField(max_length=16, unique=False)
+    #
     load = models.ForeignKey(Load, on_delete=models.CASCADE, related_name='edit_load')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='edit_load_user')
     edit_time = models.DateTimeField(auto_now_add=True)

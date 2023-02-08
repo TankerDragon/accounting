@@ -1,8 +1,8 @@
-import React from "react";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Joi from "joi-browser";
 import Input from "./common/Input";
+import LoadingButton from "./common/LoadingButton";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
 import JWTDecoder from "../functions/JWTDecoder";
@@ -29,7 +29,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+  const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   const handleChange = ({ currentTarget: input }) => {
@@ -65,12 +65,14 @@ const Login = () => {
 
     // post to server
     try {
+      setIsLoading(true);
       const response = await axios.post(LOGIN_URL, JSON.stringify(login), {
         headers: { "Content-Type": "application/json" },
         // withCredentials: true,
       });
 
       console.log(response);
+      setIsLoading(false);
 
       const accessToken = response?.data?.access;
       const payload = JWTDecoder(accessToken);
@@ -82,6 +84,7 @@ const Login = () => {
       });
       navigate(from, { replace: true });
     } catch (err) {
+      setIsLoading(false);
       if (!err?.response) {
         setErrMsg("No Server Response");
       } else if (err.response?.status === 400) {
@@ -99,13 +102,31 @@ const Login = () => {
     <div className="login">
       <form onSubmit={handleSubmit}>
         <h1>Sign In</h1>
-        <Input name="username" type="text" value={login.username} label="Username" onChange={handleChange} error={errors.username} />
-        <Input name="password" type="password" value={login.password} label="Password" onChange={handleChange} error={errors.password} />
-        <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
+        <Input
+          name="username"
+          type="text"
+          value={login.username}
+          label="Username"
+          onChange={handleChange}
+          error={errors.username}
+        />
+        <Input
+          name="password"
+          type="password"
+          value={login.password}
+          label="Password"
+          onChange={handleChange}
+          error={errors.password}
+        />
+        <p
+          ref={errRef}
+          className={errMsg ? "errmsg" : "offscreen"}
+          aria-live="assertive"
+        >
           {errMsg}
         </p>
         <div className="buttons">
-          <button>Log in</button>
+          {isLoading ? <LoadingButton /> : <button>Log in</button>}
         </div>
       </form>
     </div>

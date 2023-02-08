@@ -268,6 +268,8 @@ const GrossForm = ({
             onChange={handleChange}
             error={errors.origin_state}
           />
+          <div></div>
+          <div></div>
         </div>
         <div className="row">
           <Input
@@ -287,6 +289,8 @@ const GrossForm = ({
             onChange={handleChange}
             error={errors.destination_state}
           />
+          <div></div>
+          <div></div>
         </div>
         <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
           {errMsg}

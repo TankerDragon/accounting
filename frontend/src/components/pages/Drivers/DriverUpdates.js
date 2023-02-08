@@ -3,15 +3,18 @@ import { ImCross } from "react-icons/im";
 import Form from "../../common/Form";
 import Loading from "../../common/Loading";
 import useRequest from "../../../hooks/useRequest";
-import { DRIVERS_URL } from "../../../constants/constants";
-import { DRIVER_TYPE } from "../../../constants/constants";
-import { getName, getChoice } from "../../../functions/Functions";
+import {
+  DRIVERS_URL,
+  DRIVER_TYPE,
+  DRIVER_STATUS,
+} from "../../../constants/constants";
+import { getUsername, getChoice, fixDate } from "../../../functions/Functions";
 
 const is_updated = (index, data, attr) => {
   return index != 0 && data[index - 1][attr] != data[index][attr];
 };
 
-const DriverUpdates = ({ dispatchers, closeUpdates, edit }) => {
+const DriverUpdates = ({ dispatchers, users, closeUpdates, edit }) => {
   const request = useRequest(DRIVERS_URL + "?updates=" + edit.id);
 
   useEffect(() => {
@@ -39,7 +42,7 @@ const DriverUpdates = ({ dispatchers, closeUpdates, edit }) => {
             <thead>
               <tr>
                 <th>Edited time</th>
-                <th>By user</th>
+                <th>Edited by</th>
                 <th>First name</th>
                 <th>Last name</th>
                 <th>Dispatcher</th>
@@ -47,21 +50,14 @@ const DriverUpdates = ({ dispatchers, closeUpdates, edit }) => {
                 <th>Gross target</th>
                 <th>Status</th>
                 <th>Notes</th>
-                <th>Active</th>
               </tr>
             </thead>
             <tbody>
               {request.data.map((update, index) => {
                 return (
                   <tr key={update.id}>
-                    <td>{update.edit_time}</td>
-                    <td
-                      className={
-                        is_updated(index, request.data, "user") ? "updated" : ""
-                      }
-                    >
-                      {update.user}
-                    </td>
+                    <td>{fixDate(update.edit_time)}</td>
+                    <td>{getUsername(update.user, users)}</td>
                     <td
                       className={
                         is_updated(index, request.data, "first_name")
@@ -87,7 +83,7 @@ const DriverUpdates = ({ dispatchers, closeUpdates, edit }) => {
                           : ""
                       }
                     >
-                      {getName(update.dispatcher, dispatchers)}
+                      {getUsername(update.dispatcher, dispatchers)}
                     </td>
                     <td
                       className={
@@ -114,7 +110,7 @@ const DriverUpdates = ({ dispatchers, closeUpdates, edit }) => {
                           : ""
                       }
                     >
-                      {update.status}
+                      {getChoice(update.status, DRIVER_STATUS)}
                     </td>
                     <td
                       className={
@@ -124,15 +120,6 @@ const DriverUpdates = ({ dispatchers, closeUpdates, edit }) => {
                       }
                     >
                       {update.notes}
-                    </td>
-                    <td
-                      className={
-                        is_updated(index, request.data, "is_active")
-                          ? "updated"
-                          : ""
-                      }
-                    >
-                      {update.is_active}
                     </td>
                   </tr>
                 );

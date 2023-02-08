@@ -16,6 +16,30 @@ const useRequest = (url) => {
   // useEffect(() => {
   //   getData();
   // }, []);
+  const getPage = async (pageNum) => {
+    try {
+      const response = await axios.get(`${url}?page=${pageNum}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "JWT " + auth.accessToken,
+        },
+      });
+      setData((prev) => [...prev, ...response.data.results]);
+      setHasNextPage(response.data.next ? true : false);
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      if (!err?.response) {
+        createMessage({ type: "danger", content: "No Server Response" });
+      } else if (err.response.status === 401) {
+        navigate("/login");
+      } else if (err.response.status === 403) {
+        createMessage({ type: "danger", content: err.response.data.detail });
+      } else {
+        createMessage({ type: "danger", content: err.message });
+      }
+    }
+  };
 
   const getData = async () => {
     setIsLoading(true);
@@ -99,7 +123,7 @@ const useRequest = (url) => {
     }
   };
 
-  return { data, errors, isLoading, getData, postPutData };
+  return { data, errors, isLoading, getData, getPage, postPutData };
 };
 
 export default useRequest;

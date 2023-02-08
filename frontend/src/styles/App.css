@@ -296,15 +296,19 @@ body {
   background: var(--color-container);
   box-shadow: 0px 0px 10px 0px var(--color-box-shadow);
   border: 1px solid rgb(179, 179, 179);
-  width: 800px;
+  min-width: 800px;
+  max-width: 70%;
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 3;
-  max-width: 1400px;
   padding: 20px;
   border-radius: 10px;
+}
+.form .table-container {
+  height: auto;
+  min-height: 40vh;
 }
 .gross-form {
   width: 1100px;

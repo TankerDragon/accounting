@@ -2,26 +2,25 @@ import { Link, useNavigate } from "react-router-dom";
 // import icons
 import { BsPencil } from "react-icons/bs";
 import { BiUser } from "react-icons/bi";
+import { GiAnticlockwiseRotation } from "react-icons/gi";
+import {
+  fixDate,
+  getName,
+  getUsername,
+  getChoice,
+  getFullName,
+} from "../../../functions/Functions";
+import { GROSS_STATUS, BUDGET_TYPE } from "../../../constants/constants";
 
-const fixDate = (dateTime) => {
-  const time = new Date(dateTime);
-  return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
-};
-
-const getName = (id, names) => {
-  for (let name of names) {
-    if (name.id === id) return name.first_name + " " + name.last_name;
-  }
-  return "! name not found !";
-};
-const getCarrier = (id, list) => {
-  for (let l of list) {
-    if (l.id === id) return l.name;
-  }
-  return "";
-};
-
-const GrossTable = ({ logs, drivers, dispatchers, carriers, handleEdit }) => {
+const GrossTable = ({
+  logs,
+  drivers,
+  dispatchers,
+  users,
+  carriers,
+  handleEdit,
+  handleUpdates,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -59,15 +58,15 @@ const GrossTable = ({ logs, drivers, dispatchers, carriers, handleEdit }) => {
           {logs.map((log, index) => {
             return (
               <tr key={log.id}>
-                <td>{log.user}</td>
+                <td>{getUsername(log.user, users)}</td>
                 <td>{log.pcs_number}</td>
-                <td>{getCarrier(log.carrier, carriers)}</td>
+                <td>{getName(log.carrier, carriers)}</td>
                 <td>{log.bol_number}</td>
                 <td>{fixDate(log.time)}</td>
-                <td>{getName(log.dispatcher, dispatchers)}</td>
+                <td>{getUsername(log.dispatcher, dispatchers)}</td>
                 <td>{log.truck}</td>
                 <td>{log.trailer}</td>
-                <td>{getName(log.driver, drivers)}</td>
+                <td>{getFullName(log.driver, drivers)}</td>
                 <td>{log.original_rate}</td>
                 <td>{log.current_rate}</td>
                 <td
@@ -93,29 +92,9 @@ const GrossTable = ({ logs, drivers, dispatchers, carriers, handleEdit }) => {
                       : "rejected"
                   }
                 >
-                  {log.status === "CO"
-                    ? "Covered"
-                    : log.status === "SO"
-                    ? "Sold"
-                    : log.status === "TO"
-                    ? "Tonu"
-                    : log.status === "RJ"
-                    ? "Rejected"
-                    : log.status === "RM"
-                    ? "Removed"
-                    : "***error"}
+                  {getChoice(log.status, GROSS_STATUS)}
                 </td>
-                <td>
-                  {log.budget_type === "D"
-                    ? "Driver's"
-                    : log.budget_type === "L"
-                    ? "Lane"
-                    : log.budget_type === "R"
-                    ? "Recovery"
-                    : log.budget_type === "S"
-                    ? "Dirilis"
-                    : "***error"}
-                </td>
+                <td>{getChoice(log.budget_type, BUDGET_TYPE)}</td>
                 <td>{log.autobooker ? "yes" : ""}</td>
                 <td>{log.origin}</td>
                 <td>{log.origin_state}</td>
@@ -132,11 +111,15 @@ const GrossTable = ({ logs, drivers, dispatchers, carriers, handleEdit }) => {
                     >
                       <BsPencil className="icon edit" />
                     </div>
-                    {log.is_edited && (
-                      <div className="msg">
-                        <Link to={"/edit-archive/" + log.id}>edited</Link>
-                      </div>
-                    )}
+                    <div
+                      className="icon-holder"
+                      title="see all updates"
+                      onClick={() => {
+                        handleUpdates(log);
+                      }}
+                    >
+                      <GiAnticlockwiseRotation className="icon clock" />
+                    </div>
                   </div>
                 </td>
               </tr>

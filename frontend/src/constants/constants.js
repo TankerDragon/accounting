@@ -30,6 +30,17 @@ export const DRIVER_TYPE = {
   R: "Rental operator",
 };
 
+export const DRIVER_STATUS = {
+  rea: "Ready",
+  cov: "Covered",
+  pre: "Prebooked",
+  hom: "Home",
+  enr: "Enroute",
+  hol: "Holiday",
+  res: "Rest",
+  ina: "Inactive",
+};
+
 export const BUDGET_TYPE = {
   D: "Driver's budget",
   L: "Lane budget",

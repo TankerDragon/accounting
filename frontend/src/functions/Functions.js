@@ -19,9 +19,23 @@ export const Functions = {
   },
 };
 
-export const getName = (id, names) => {
+export const getName = (id, list) => {
+  for (let l of list) {
+    if (l.id === id) return l.name;
+  }
+  return "";
+};
+
+export const getFullName = (id, names) => {
   for (let name of names) {
     if (name.id === id) return name.first_name + " " + name.last_name;
+  }
+  return "";
+};
+
+export const getUsername = (id, names) => {
+  for (let name of names) {
+    if (name.id === id) return name.username;
   }
   return "";
 };
@@ -34,4 +48,13 @@ export const getChoice = (choice, choices) => {
     }
   });
   return found;
+};
+
+export const fixDate = (dateTime) => {
+  const time = new Date(dateTime);
+  return time.toLocaleDateString() + " - " + time.toLocaleTimeString();
+};
+
+export const is_updated = (index, data, attr) => {
+  return index != 0 && data[index - 1][attr] != data[index][attr];
 };

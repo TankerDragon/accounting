@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from core.models import User
 from core.serializers import UserSerializer
-from .models import Driver, EditDriver, Load, Carrier
+from .models import Driver, EditDriver, Load, EditLoad, Carrier, EditCarrier
 
 
 class DriverSerializer(ModelSerializer):
@@ -43,21 +43,61 @@ class CarrierSerializer(ModelSerializer):
         model = Carrier
         fields = '__all__'
 
+    def update(self, instance: Carrier, validated_data):
+        # updating
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # saving updates
+        request_user_id = self.initial_data.get('request_user_id')
+        edit = EditCarrier()
+        for attr, value in validated_data.items():
+            setattr(edit, attr, value)
+        edit.carrier_id = instance.id
+        edit.user_id = request_user_id
+        edit.save()
+        return instance
+
 class CarrierListSerializer(ModelSerializer):
     class Meta:
         model = Carrier
         fields = ['id', 'name']
 
-
-class LogDecimalFielsSerializer(Serializer):
-    current_rate = serializers.DecimalField(max_digits=9, decimal_places=2)
-    original_rate = serializers.DecimalField(max_digits=9, decimal_places=2)
+class CarrierEditSerializer(ModelSerializer):
+    class Meta:
+        model = EditCarrier
+        fields = '__all__'
 
 
 class LoadSerializer(ModelSerializer):
     change = SerializerMethodField(method_name='calculate_change')
     class Meta:
         model = Load
+        fields = '__all__'
+        read_only_fields = ['change']
+
+    def calculate_change(self, load: Load):
+        return load.original_rate - load.current_rate
+    
+    def update(self, instance: EditLoad, validated_data):
+        # updating
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # saving updates
+        request_user_id = self.initial_data.get('request_user_id')
+        edit = EditLoad()
+        for attr, value in validated_data.items():
+            setattr(edit, attr, value)
+        edit.load_id = instance.id
+        edit.user_id = request_user_id
+        edit.save()
+        return instance
+    
+class LoadEditSerializer(ModelSerializer):
+    change = SerializerMethodField(method_name='calculate_change')
+    class Meta:
+        model = EditLoad
         fields = '__all__'
         read_only_fields = ['change']
 

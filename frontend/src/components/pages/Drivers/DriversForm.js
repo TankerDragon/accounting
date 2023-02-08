@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { DRIVERS_URL, DRIVER_TYPE } from "../../../constants/constants";
+import {
+  DRIVERS_URL,
+  DRIVER_TYPE,
+  DRIVER_STATUS,
+} from "../../../constants/constants";
 import useRequest from "../../../hooks/useRequest";
 import Form from "../../common/Form";
 import Input from "../../common/Input";
@@ -22,6 +26,8 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
           dispatcher: "",
           driver_type: "L",
           gross_target: 10000,
+          status: "rea",
+          notes: "",
         }
   );
 
@@ -29,10 +35,7 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
   const DISPATCHERS = [];
   DISPATCHERS.push(["", "--------"]);
   for (let dispatcher of dispatchers) {
-    DISPATCHERS.push([
-      dispatcher.id,
-      dispatcher.first_name + " " + dispatcher.last_name,
-    ]);
+    DISPATCHERS.push([dispatcher.id, dispatcher.username]);
   }
 
   const handleChange = ({ currentTarget: input }) => {
@@ -67,7 +70,7 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
   return (
     <Form>
       <div className="row">
-        <h1>Add new driver</h1>
+        {method == "POST" ? <h1>Add new driver</h1> : <h1>Update driver</h1>}
       </div>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -116,6 +119,25 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
             label="Gross Target"
             onChange={handleChange}
             error={errors.gross_target}
+          />
+          <Select
+            name="status"
+            selections={DRIVER_STATUS}
+            isObject={true}
+            value={log.status}
+            label="Driver type"
+            onChange={handleChange}
+            error={errors.status}
+          />
+        </div>
+        <div className="row">
+          <Input
+            name="notes"
+            type="text"
+            value={log.notes}
+            label="Notes"
+            onChange={handleChange}
+            error={errors.notes}
           />
         </div>
 

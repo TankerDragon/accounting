@@ -5,13 +5,21 @@ import DriversTable from "./DriversTable";
 import DriversForm from "./DriversForm";
 import DriverUpdates from "./DriverUpdates";
 import Loading from "../../common/Loading";
-import { DRIVERS_URL } from "../../../constants/constants";
+import {
+  DRIVERS_URL,
+  USERS_LIST_URL,
+  DISPATCHERS_LIST_URL,
+} from "../../../constants/constants";
 
 const Drivers = () => {
   const request = useRequest(DRIVERS_URL);
+  const usersRequest = useRequest(USERS_LIST_URL);
+  const dispatchersRequest = useRequest(DISPATCHERS_LIST_URL);
 
   useEffect(() => {
     request.getData();
+    usersRequest.getData();
+    dispatchersRequest.getData();
   }, []);
 
   const [formOpen, setFormOpen] = useState(false);
@@ -23,6 +31,8 @@ const Drivers = () => {
     setFormOpen(false);
     if (reload) {
       request.getData();
+      usersRequest.getData();
+      dispatchersRequest.getData();
     }
   };
   const closeUpdates = () => {
@@ -59,8 +69,8 @@ const Drivers = () => {
         <Loading />
       ) : (
         <DriversTable
-          drivers={request.data || []}
-          dispatchers={request.data.dispatchers || []}
+          drivers={request.data}
+          dispatchers={dispatchersRequest.data}
           handleEdit={handleEdit}
           handleUpdates={handleUpdates}
         />
@@ -69,7 +79,7 @@ const Drivers = () => {
         {formOpen && (
           <DriversForm
             closeForm={closeForm}
-            dispatchers={request.data.dispatchers || []}
+            dispatchers={dispatchersRequest.data}
             method={method}
             edit={edit}
           />
@@ -78,7 +88,8 @@ const Drivers = () => {
       <AnimatePresence initial={false}>
         {updatesOpen && (
           <DriverUpdates
-            dispatchers={[]}
+            dispatchers={dispatchersRequest.data}
+            users={usersRequest.data}
             closeUpdates={closeUpdates}
             edit={edit}
           />
