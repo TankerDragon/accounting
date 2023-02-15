@@ -38,6 +38,7 @@ class BaseDriver(models.Model):
         abstract = True
 
 class Driver(BaseDriver):
+    current_load = models.ForeignKey('Load', null=True, on_delete=models.CASCADE, related_name='driver_load')
     d_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     l_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     r_budget = models.DecimalField(max_digits=9, decimal_places=2, default=0)

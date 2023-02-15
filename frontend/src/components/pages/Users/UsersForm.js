@@ -86,7 +86,7 @@ const UsersForm = ({ closeForm, method, edit }) => {
   return (
     <Form>
       <div className="row">
-        <h1>Add new user</h1>
+        {method === "POST" ? <h1>Add new user</h1> : <h1>Update user</h1>}
       </div>
       <form onSubmit={handleSubmit}>
         <div className="row">

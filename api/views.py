@@ -1,6 +1,5 @@
 import datetime
 import time
-from decimal import Decimal
 from django.shortcuts import render, HttpResponse
 from django.db.models import Q
 from rest_framework.response import Response
@@ -26,7 +25,7 @@ def test(request):
 @api_view(['GET', 'POST', 'PUT'])
 @permission_classes([AllowAny])
 def drivers(request):
-    time.sleep(0.5)
+    time.sleep(2.5)
     if request.method == 'GET':
         if check_permission(request.user, 'view', 'driver'):
             if request.GET.get('list'):
@@ -35,6 +34,14 @@ def drivers(request):
             elif request.GET.get('updates'):
                 query = EditDriver.objects.filter(driver_id=request.GET.get('updates'))
                 serializer = DriverEditSerializer(query, many=True)
+            elif request.GET.get('id'):
+                query = Driver.objects.get(pk=request.GET.get('id'))
+                serializer = DriverSerializer(query)
+                if query.current_load:
+                    load = Load.objects.get(pk=query.current_load_id)
+                    load_serializer = LoadSerializer(load)
+                    carrier_name = Carrier.objects.values('name').get(pk=load.carrier_id)['name']
+                    return Response({**serializer.data, 'load': load_serializer.data, 'carrier_name': carrier_name}, status=status.HTTP_200_OK)
             else:
                 query = Driver.objects.all()
                 serializer = DriverSerializer(query, many=True)
@@ -170,9 +177,12 @@ def gross(request):
         if request.GET.get('updates'):
             query = EditLoad.objects.filter(load_id=request.GET.get('updates'))
             serializer = LoadEditSerializer(query, many=True)
+        elif request.GET.get('id'):
+            query = Load.objects.get(pk=request.GET.get('id'))
+            serializer = LoadSerializer(query)
         elif request.GET.get('pagination'):
             paginator = PageNumberPagination()
-            paginator.page_size = 1
+            paginator.page_size = 18
             load_objects = Load.objects.all().order_by('-time')
             result_page = paginator.paginate_queryset(load_objects, request)
             serializer = LoadSerializer(result_page, many=True)
@@ -188,6 +198,9 @@ def gross(request):
         log_serializer = LoadSerializer(data=data)
         if log_serializer.is_valid():
             new_log = log_serializer.save()
+            driver = Driver.objects.get(pk=new_log.driver_id)
+            driver.current_load = new_log
+            driver.save()
             generate_action(request.user.id, 'cre', new_log.id, 'gro')
             return Response({'success': 'gross has been succesfully added'}, status=status.HTTP_200_OK)
         return Response(log_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

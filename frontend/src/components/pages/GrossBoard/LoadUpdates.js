@@ -33,7 +33,7 @@ const LoadUpdates = ({
   return (
     <Form>
       <div className="row">
-        <h1>Updates on carrier: {edit.name}</h1>
+        <h1>Updates on load: {edit.pcs_number}</h1>
         <div
           className="icon-holder"
           onClick={() => {

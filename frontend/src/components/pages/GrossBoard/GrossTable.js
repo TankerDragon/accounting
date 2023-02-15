@@ -11,6 +11,7 @@ import {
   getFullName,
 } from "../../../functions/Functions";
 import { GROSS_STATUS, BUDGET_TYPE } from "../../../constants/constants";
+import { useState } from "react";
 
 const GrossTable = ({
   logs,
@@ -21,41 +22,52 @@ const GrossTable = ({
   handleEdit,
   handleUpdates,
 }) => {
-  const navigate = useNavigate();
+  const [loads, SetLoads] = useState(logs);
+  const array = [...loads];
+  const handelSort = (attr) => {
+    if (array[0]["sort"] === -1 || array[0]["sort"] == null) {
+      array.sort((a, b) => (a[attr] < b[attr] ? -1 : 1));
+      array[0]["sort"] = 1;
+    } else {
+      array.sort((a, b) => (a[attr] < b[attr] ? 1 : -1));
+      array[0]["sort"] = -1;
+    }
+    SetLoads(array);
+  };
 
   return (
     <div className="table-container">
       <table className="table">
         <thead>
           <tr>
-            <th>
+            <th onClick={() => handelSort("user")}>
               <BiUser />
             </th>
-            <th>PCS number</th>
-            <th>Carrier</th>
-            <th>Load ID</th>
-            <th>Date and Time</th>
-            <th>Dispatcher</th>
-            <th>Truck</th>
-            <th>Trailer</th>
-            <th>Driver's name</th>
-            <th>Original rate</th>
-            <th>Current rate</th>
-            <th>Change</th>
-            <th>Mileage</th>
-            <th>Status</th>
-            <th>Budget type</th>
-            <th>Autobooker</th>
-            <th>Origin</th>
-            <th></th>
-            <th>Destination</th>
-            <th></th>
+            <th onClick={() => handelSort("pcs_number")}>PCS number</th>
+            <th onClick={() => handelSort("carrier")}>Carrier</th>
+            <th onClick={() => handelSort("bol_number")}>Load ID</th>
+            <th onClick={() => handelSort("time")}>Date and Time</th>
+            <th onClick={() => handelSort("dispatcher")}>Dispatcher</th>
+            <th onClick={() => handelSort("truck")}>Truck</th>
+            <th onClick={() => handelSort("trailer")}>Trailer</th>
+            <th onClick={() => handelSort("driver")}>Driver's name</th>
+            <th onClick={() => handelSort("original_rate")}>Original rate</th>
+            <th onClick={() => handelSort("current_rate")}>Current rate</th>
+            <th onClick={() => handelSort("change")}>Change</th>
+            <th onClick={() => handelSort("total_miles")}>Mileage</th>
+            <th onClick={() => handelSort("status")}>Status</th>
+            <th onClick={() => handelSort("budget_type")}>Budget type</th>
+            <th onClick={() => handelSort("autobooker")}>Autobooker</th>
+            <th onClick={() => handelSort("origin")}>Origin</th>
+            <th onClick={() => handelSort("origin_state")}></th>
+            <th onClick={() => handelSort("destination")}>Destination</th>
+            <th onClick={() => handelSort("destination_state")}></th>
             <th>Notes</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {logs.map((log, index) => {
+          {loads.map((log, index) => {
             return (
               <tr key={log.id}>
                 <td>{getUsername(log.user, users)}</td>

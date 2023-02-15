@@ -7,6 +7,7 @@ import Missing from "./components/Missing";
 import GrossBoard from "./components/pages/GrossBoard/GrossBoard";
 import Users from "./components/pages/Users/Users";
 import Drivers from "./components/pages/Drivers/Drivers";
+import Driver from "./components/pages/Drivers/Driver";
 import Carriers from "./components/pages/Carriers/Carriers";
 import Accounting from "./components/pages/Accounting/Accounting";
 import DriversGross from "./components/pages/DriversGross/DriversGross";
@@ -44,6 +45,7 @@ const App = () => {
           >
             <Route path="gross-board" element={<GrossBoard />} />
             <Route path="drivers" element={<Drivers />} />
+            <Route path="driver/:id" element={<Driver />} />
             <Route path="users" element={<Users />} />
             <Route path="carriers" element={<Carriers />} />
             <Route path="actions" element={<Actions />} />

@@ -114,7 +114,7 @@ const GrossForm = ({
   return (
     <Form>
       <div className="row">
-        <h1>Add new Gross</h1>
+        <h1>Add new load</h1>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="row">

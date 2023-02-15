@@ -14,14 +14,18 @@ import {
 import Loading from "../../common/Loading";
 
 const GrossBoard = () => {
+  // const PAGE_SIZE = 18;
   const request = useRequest(GROSS_URL);
   const driversRequest = useRequest(DRIVERS_LIST_URL);
   const dispatchersRequest = useRequest(DISPATCHERS_LIST_URL);
   const usersRequest = useRequest(USERS_LIST_URL);
   const carriersRequest = useRequest(CARRIERS_LIST_URL);
 
+  const [pageNum, setPageNum] = useState(1);
+
   useEffect(() => {
     request.getData();
+    // request.getPage(pageNum);
     driversRequest.getData();
     dispatchersRequest.getData();
     usersRequest.getData();
@@ -57,11 +61,17 @@ const GrossBoard = () => {
     setFormOpen(false);
     setUpdatesOpen(true);
   };
+  // const handlePage = (num) => {
+  //   if (num > 0 && num <= Math.ceil(request.pageControl.count / PAGE_SIZE)) {
+  //     setPageNum(num);
+  //     request.getPage(num);
+  //   }
+  // };
 
   return (
     <div className="page-container">
       <div className="row">
-        <h1>Gross board</h1>
+        <h1>Load board</h1>
         <button
           className="button"
           onClick={() => {
@@ -76,16 +86,47 @@ const GrossBoard = () => {
       {request.isLoading ? (
         <Loading />
       ) : (
-        <GrossTable
-          logs={request.data}
-          drivers={driversRequest.data}
-          dispatchers={dispatchersRequest.data}
-          users={usersRequest.data}
-          carriers={carriersRequest.data}
-          handleEdit={handleEdit}
-          handleUpdates={handleUpdates}
-        />
+        <>
+          <GrossTable
+            logs={request.data}
+            drivers={driversRequest.data}
+            dispatchers={dispatchersRequest.data}
+            users={usersRequest.data}
+            carriers={carriersRequest.data}
+            handleEdit={handleEdit}
+            handleUpdates={handleUpdates}
+          />
+          {/* <div className="pagination">
+            <ul>
+              {request.pageControl.previous && (
+                <li
+                  onClick={() => {
+                    handlePage(pageNum - 1);
+                  }}
+                >
+                  <span className="page-link" aria-label="Previous">
+                    <span>&laquo;</span>
+                    <span className="sr-only">Prev</span>
+                  </span>
+                </li>
+              )}
+              {request.pageControl.next && (
+                <li
+                  onClick={() => {
+                    handlePage(pageNum + 1);
+                  }}
+                >
+                  <span className="page-link" aria-label="Next">
+                    <span className="sr-only">Next</span>
+                    <span>&raquo;</span>
+                  </span>
+                </li>
+              )}
+            </ul>
+          </div> */}
+        </>
       )}
+
       <AnimatePresence initial={false}>
         {formOpen && (
           <GrossForm

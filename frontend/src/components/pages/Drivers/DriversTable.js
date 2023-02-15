@@ -1,9 +1,12 @@
-import { BsPencil } from "react-icons/bs";
+import { useNavigate } from "react-router";
 import { GiAnticlockwiseRotation } from "react-icons/gi";
+import { BiUser } from "react-icons/bi";
+import { BsPencil } from "react-icons/bs";
 import { DRIVER_TYPE, DRIVER_STATUS } from "../../../constants/constants";
 import { getUsername, getChoice } from "../../../functions/Functions";
 
 const DriversTable = ({ drivers, dispatchers, handleEdit, handleUpdates }) => {
+  const navigate = useNavigate();
   return (
     <div className="table-container">
       <table className="table">
@@ -42,6 +45,15 @@ const DriversTable = ({ drivers, dispatchers, handleEdit, handleUpdates }) => {
                       }}
                     >
                       <BsPencil className="icon edit" />
+                    </div>
+                    <div
+                      className="icon-holder"
+                      title="see all updates"
+                      onClick={() => {
+                        navigate("/driver/" + driver.id);
+                      }}
+                    >
+                      <BiUser className="icon profile" />
                     </div>
                     <div
                       className="icon-holder"

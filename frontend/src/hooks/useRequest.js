@@ -13,19 +13,35 @@ const useRequest = (url) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const [pageControl, setPageControl] = useState({
+    count: 0,
+    next: true,
+    previous: true,
+  });
+
   // useEffect(() => {
   //   getData();
   // }, []);
   const getPage = async (pageNum) => {
+    setIsLoading(true);
     try {
-      const response = await axios.get(`${url}?page=${pageNum}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "JWT " + auth.accessToken,
-        },
+      const response = await axios.get(
+        `${url}?pagination=True&page=${pageNum}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "JWT " + auth.accessToken,
+          },
+        }
+      );
+      setData(response.data.results);
+      setPageControl({
+        count: response.data.count,
+        next: response.data.next ? true : false,
+        previous: response.data.previous ? true : false,
       });
-      setData((prev) => [...prev, ...response.data.results]);
-      setHasNextPage(response.data.next ? true : false);
+
+      // setHasNextPage(response.data.next ? true : false);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -123,7 +139,15 @@ const useRequest = (url) => {
     }
   };
 
-  return { data, errors, isLoading, getData, getPage, postPutData };
+  return {
+    data,
+    errors,
+    isLoading,
+    getData,
+    getPage,
+    pageControl,
+    postPutData,
+  };
 };
 
 export default useRequest;

@@ -243,7 +243,7 @@ body {
   width: 130px;
   height: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   opacity: 0.6;
   transition: 0.3s ease;
@@ -383,4 +383,38 @@ body {
 }
 .loadingButton img {
   width: 20px;
+}
+/*  */
+.pagination {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+.pagination ul {
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style-type: none;
+}
+.pagination ul li {
+  padding: 7px;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+.pagination ul li:hover {
+  cursor: pointer;
+  background-color: var(--color-background);
+}
+/*  */
+.info-container {
+  margin: 30px;
+  width: 25%;
+}
+.info-container span {
+  margin: 7px 0px;
+  display: block;
+  width: 100%;
 }
