@@ -1,0 +1,12 @@
+
+
+.activity-chart {
+    background: rgba(221, 221, 221, 0.788);
+    margin: 20px 30px;
+    height: 30px;
+    position: relative;
+}
+.activity-chart .chart-element {
+    position: absolute;
+    height: 30px !important;
+}

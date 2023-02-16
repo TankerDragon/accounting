@@ -104,7 +104,7 @@ class EditTrailer(BaseTrailer):
 class BaseLoad(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     dispatcher = models.ForeignKey(User, on_delete=models.CASCADE)
-    carrier = models.ForeignKey(Carrier, on_delete=models.SET_NULL, null=True)
+    carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
     truck = models.ForeignKey(Vehicle, on_delete=models.SET_NULL, null=True)
     trailer = models.ForeignKey(Trailer, on_delete=models.SET_NULL, null=True)
     original_rate = models.DecimalField(max_digits=9, decimal_places=2)

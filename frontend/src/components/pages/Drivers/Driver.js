@@ -8,6 +8,7 @@ import {
 } from "../../../constants/constants";
 import { fixDate, getChoice } from "../../../functions/Functions";
 import Loading from "../../common/Loading";
+import ActivityCart from "../../common/ActivityCart";
 
 const Driver = () => {
   const params = useParams();
@@ -119,6 +120,7 @@ const Driver = () => {
           </div>
         )
       )}
+      <ActivityCart />
     </div>
   );
 };

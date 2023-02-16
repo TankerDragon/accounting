@@ -20,6 +20,7 @@ import "./styles/App.css";
 import "./styles/index.css";
 import "./styles/home.css";
 import "./styles/eld.css";
+import "./styles/charts.css"
 
 const App = () => {
   return (
