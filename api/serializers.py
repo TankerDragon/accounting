@@ -37,6 +37,11 @@ class DriverEditSerializer(ModelSerializer):
         model = EditDriver
         fields = '__all__'
 
+class DriverActivitySerializer(ModelSerializer):
+    class Meta:
+        model = EditDriver
+        fields = ['status', 'edit_time']
+
 
 class CarrierSerializer(ModelSerializer):
     class Meta:

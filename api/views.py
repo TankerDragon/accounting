@@ -1,5 +1,5 @@
-import datetime
 import time
+from datetime import datetime
 from django.shortcuts import render, HttpResponse
 from django.db.models import Q
 from rest_framework.response import Response
@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from core.serializers import UserSerializer, UserCreateSerializer, UserListSerializer, AppUserSerializer
 from core.models import User, Appuser
-from .serializers import DriverSerializer, DriverListSerializer, DriverEditSerializer, CarrierSerializer, CarrierListSerializer, CarrierEditSerializer, LoadSerializer, LoadEditSerializer
+from .serializers import DriverSerializer, DriverListSerializer, DriverEditSerializer, DriverActivitySerializer, CarrierSerializer, CarrierListSerializer, CarrierEditSerializer, LoadSerializer, LoadEditSerializer
 from .models import Driver, EditDriver , Carrier, EditCarrier, Load, EditLoad
 from .functions import check_permission, get_week_start, generate_action
 from .tasks import notify_customers
@@ -34,6 +34,12 @@ def drivers(request):
             elif request.GET.get('updates'):
                 query = EditDriver.objects.filter(driver_id=request.GET.get('updates'))
                 serializer = DriverEditSerializer(query, many=True)
+            elif request.GET.get('activity'):
+                query = EditDriver.objects.values('status', 'edit_time').filter(driver_id=request.GET.get('id'), edit_time__gte=request.GET.get('from'), edit_time__lte=request.GET.get('to'))
+                serializer = DriverActivitySerializer(query, many=True)
+                # 'from': datetime.strptime(request.GET.get('from'), '%Y-%M-%d'),
+                # 'to': datetime.strptime(request.GET.get('to'), '%Y-%M-%d'),
+                return Response(serializer.data, status=status.HTTP_200_OK)
             elif request.GET.get('id'):
                 query = Driver.objects.get(pk=request.GET.get('id'))
                 serializer = DriverSerializer(query)

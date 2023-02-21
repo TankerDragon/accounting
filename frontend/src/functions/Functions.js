@@ -19,6 +19,39 @@ export const Functions = {
   },
 };
 
+export const dateToString = (date, format) => {
+  // %y - year
+  // %m - month
+  // %d - day
+  // %H - Hour
+  // %M - Minute
+  // %S - Second
+
+  // look for %y
+  if (format.includes("%y")) {
+    var a = date.getFullYear();
+    format = format.replace("%y", a);
+  }
+  // look for %m
+  if (format.includes("%m")) {
+    var a = date.getMonth() + 1;
+    a = a < 10 ? "0" + a : a;
+    format = format.replace("%m", a);
+  }
+  // look for %d
+  if (format.includes("%d")) {
+    var a = date.getDate();
+    a = a < 10 ? "0" + a : a;
+    format = format.replace("%d", a);
+  }
+  // look for %H
+  // if (format.includes("%H")) {
+  //   var a = date.get() + 1;
+  //   format = format.replace("%H", a);
+  // }
+  return format;
+};
+
 export const getName = (id, list) => {
   for (let l of list) {
     if (l.id === id) return l.name;

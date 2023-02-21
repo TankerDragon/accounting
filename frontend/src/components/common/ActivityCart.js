@@ -1,31 +1,30 @@
 import { fixDate } from "../../functions/Functions";
 
-const ActivityCart = ({}) => {
-  const data = {
-    from: "2023-02-13T00:00:00.000000-05:00",
-    to: "2023-02-14T00:00:00.000000-05:00",
-    charts: [
-      {
-        time: "2023-02-13T04:00:00.824602-05:00",
-        status: "ready",
-      },
-      {
-        time: "2023-02-13T12:00:00.824602-05:00",
-        status: "enroute",
-      },
-    ],
-    colors: {
-      enroute: "blue",
-      ready: "red",
-    },
-  };
+const ActivityCart = ({ data }) => {
+  // const data = {
+  //   from: "2023-02-13T00:00:00.000000-05:00",
+  //   to: "2023-02-14T00:00:00.000000-05:00",
+  //   charts: [
+  //     {
+  //       time: "2023-02-13T04:00:00.824602-05:00",
+  //       status: "ready",
+  //     },
+  //     {
+  //       time: "2023-02-13T12:00:00.824602-05:00",
+  //       status: "enroute",
+  //     },
+  //   ],
+  //   colors: {
+  //     enroute: "blue",
+  //     ready: "red",
+  //   },
+  // };
   const convert = (t1, t2) => {
     var from = new Date(data.from).getTime();
     var to = new Date(data.to).getTime();
     var t1 = new Date(t1).getTime();
     var t2 = t2 === -1 ? to : new Date(t2).getTime();
     var scale = to - from;
-    console.log(t1 - from, t1, from);
     return {
       left: `${((t1 - from) / scale) * 100}%`,
       width: `${((t2 - t1) / scale) * 100}%`,
@@ -38,10 +37,11 @@ const ActivityCart = ({}) => {
         <span className="time-end">{fixDate(data.to)}</span>
         {data.charts.map((e, index) => {
           var evars = convert(
-            e.time,
-            index === data.charts.length - 1 ? -1 : data.charts[index + 1].time
+            e.edit_time,
+            index === data.charts.length - 1
+              ? -1
+              : data.charts[index + 1].edit_time
           );
-          console.log(evars);
           return (
             <span
               className="chart-element"
@@ -56,7 +56,6 @@ const ActivityCart = ({}) => {
       </div>
       <div className="map">
         {Object.keys(data.colors).map((s) => {
-          console.log(s);
           return (
             <div className="color">
               <span

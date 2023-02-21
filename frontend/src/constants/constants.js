@@ -21,6 +21,13 @@ export const USER_ROLES = {
   UPD: "Updater",
 };
 
+export const ACTIVITY_RANGE = {
+  r1: "last week",
+  r2: "one week",
+  r3: "last month",
+  r4: "one month",
+};
+
 export const DRIVER_TYPE = {
   O88: "Owner operator - 88%",
   O85: "Owner operator - 85%",

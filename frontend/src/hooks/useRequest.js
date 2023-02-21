@@ -19,6 +19,10 @@ const useRequest = (url) => {
     previous: true,
   });
 
+  const setUrl = (u) => {
+    url = u;
+  };
+
   // useEffect(() => {
   //   getData();
   // }, []);
@@ -145,6 +149,7 @@ const useRequest = (url) => {
     isLoading,
     getData,
     getPage,
+    setUrl,
     pageControl,
     postPutData,
   };

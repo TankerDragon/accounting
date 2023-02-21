@@ -125,7 +125,7 @@ const DriversForm = ({ closeForm, dispatchers, method, edit }) => {
             selections={DRIVER_STATUS}
             isObject={true}
             value={log.status}
-            label="Driver type"
+            label="Status"
             onChange={handleChange}
             error={errors.status}
           />
